@@ -32,7 +32,7 @@ ids) so you can drive one player's screen or everyone's.
 
 ## How it works
 
-The module listens on the socket channel `module.foundry-mcp-companion`. The MCP
+The module listens on the socket channel `module.foundry-mcp-gateway-companion`. The MCP
 server emits a command; a **single GM browser** (the "responder", elected
 deterministically) executes it and sends the result back — which the server
 catches in its event buffer. Scene actions (camera, ping, sound…) run on every
@@ -49,7 +49,7 @@ Install via the manifest URL in Foundry (*Add-on Modules → Install Module →
 Manifest URL*):
 
 ```
-https://github.com/wanoo/foundry-mcp-companion/releases/latest/download/module.json
+https://github.com/wanoo/foundry-mcp-gateway-companion/releases/latest/download/module.json
 ```
 
 Then enable it in your world. A **GM browser must be connected** for the

@@ -4,7 +4,7 @@
  * Le serveur MCP est un client socket NATIF : il ne peut agir que sur des
  * documents. Ce module tourne dans le NAVIGATEUR (donc avec l'API game.* de
  * jeu complète) et exécute les actions que le serveur lui délègue via le canal
- * socket `module.foundry-mcp-companion`.
+ * socket `module.foundry-mcp-gateway-companion`.
  *
  * Protocole (tout passe par game.socket, relayé par le serveur Foundry) :
  *   commande  MCP → module : { mcp:true, cmd, id, targets?, args }
@@ -15,8 +15,8 @@
  * buffer d'événements (outils client_* / get_events).
  */
 
-const CHANNEL = "module.foundry-mcp-companion";
-const MODULE_ID = "foundry-mcp-companion";
+const CHANNEL = "module.foundry-mcp-gateway-companion";
+const MODULE_ID = "foundry-mcp-gateway-companion";
 const VERSION = "0.1.0";
 
 /* ---------------------------------------------------------------- utilities */
