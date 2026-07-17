@@ -15,6 +15,8 @@
  * buffer d'événements (outils client_* / get_events).
  */
 
+import { CC_FAMILY_HANDLERS } from "./addons/cc-family.mjs";
+
 const CHANNEL = "module.foundry-mcp-gateway-companion";
 const MODULE_ID = "foundry-mcp-gateway-companion";
 const VERSION = "0.1.0";
@@ -186,28 +188,6 @@ const UNIQUE_HANDLERS = {
     };
   },
 
-  // Campaign Codex API (client-side, inaccessible au serveur socket).
-  async cc_convert({ uuid, type, pagesToSeparateSheets = false }) {
-    const api = game.modules.get("campaign-codex")?.api;
-    if (!api) throw new Error("campaign-codex module not active");
-    await api.convertJournalToCCSheet(uuid, type, pagesToSeparateSheets);
-    return { converted: uuid, type };
-  },
-
-  async cc_export_obsidian() {
-    const api = game.modules.get("campaign-codex")?.api;
-    if (!api) throw new Error("campaign-codex module not active");
-    await api.exportToObsidian();
-    return { exported: true };
-  },
-
-  async cc_open_toc({ tab }) {
-    const api = game.modules.get("campaign-codex")?.api;
-    if (!api) throw new Error("campaign-codex module not active");
-    api.openTOCSheet(tab);
-    return { opened: tab ?? "default" };
-  },
-
   // Sequencer : joue un effet visuel (si le module est actif).
   async play_effect({ file, atTokenId, x, y, scale = 1 }) {
     if (!globalThis.Sequence) throw new Error("sequencer module not active");
@@ -232,6 +212,9 @@ const UNIQUE_HANDLERS = {
     };
   },
 };
+
+// Fusionne les handlers de la famille d'addons Campaign Codex (fichier dédié).
+Object.assign(UNIQUE_HANDLERS, CC_FAMILY_HANDLERS);
 
 /* ---------------------------------------------------------------- telemetry */
 
