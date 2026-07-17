@@ -16,6 +16,7 @@
  */
 
 import { CC_FAMILY_HANDLERS } from "./addons/cc-family.mjs";
+import { SCENE_FX_HANDLERS } from "./addons/scene-fx.mjs";
 
 const CHANNEL = "module.foundry-mcp-gateway-companion";
 const MODULE_ID = "foundry-mcp-gateway-companion";
@@ -213,8 +214,8 @@ const UNIQUE_HANDLERS = {
   },
 };
 
-// Fusionne les handlers de la famille d'addons Campaign Codex (fichier dédié).
-Object.assign(UNIQUE_HANDLERS, CC_FAMILY_HANDLERS);
+// Fusionne les handlers des fichiers d'addons dédiés (famille CC + FX de scène).
+Object.assign(UNIQUE_HANDLERS, CC_FAMILY_HANDLERS, SCENE_FX_HANDLERS);
 
 /* ---------------------------------------------------------------- telemetry */
 
