@@ -20,7 +20,7 @@ import { SCENE_FX_HANDLERS } from "./addons/scene-fx.mjs";
 
 const CHANNEL = "module.foundry-mcp-gateway-companion";
 const MODULE_ID = "foundry-mcp-gateway-companion";
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 
 /* ---------------------------------------------------------------- utilities */
 
@@ -34,14 +34,21 @@ function emit(payload) {
 
 /** Le « responder » : un seul client répond aux commandes à exécution unique
  * (macros, rolls, API CC). On élit le MJ actif au plus petit id — déterministe,
- * et le connecteur MCP headless ne charge aucun module donc n'entre pas en jeu. */
+ * Élu PARMI LES CLIENTS QUI ONT CHARGÉ LE MODULE (registre `companions`), pas
+ * parmi tous les MJ actifs — sinon le connecteur MCP headless (un GM actif qui
+ * ne charge aucun module) pourrait être élu et personne ne répondrait. */
+const companions = new Set(); // userIds des clients ayant chargé ce module
+
 function isResponder() {
   if (!game.user.isGM) return false;
-  const gmIds = game.users
-    .filter((u) => u.active && u.isGM)
-    .map((u) => u.id)
+  const gmCompanions = [...companions]
+    .filter((id) => {
+      const u = game.users.get(id);
+      return u?.active && u.isGM;
+    })
     .sort();
-  return gmIds[0] === game.user.id;
+  // fallback : si le registre est vide (avant convergence), je réponds moi-même.
+  return gmCompanions.length === 0 || gmCompanions[0] === game.user.id;
 }
 
 /** Ce client doit-il exécuter une commande « de scène » selon sa cible ?
@@ -63,7 +70,16 @@ function reply(id, ok, payload) {
 const handled = new Set(); // anti-double sur les commandes à réponse unique
 
 async function onMessage(msg) {
-  if (!msg?.mcp || !msg.cmd) return; // on ignore nos propres réponses/télémétrie
+  if (!msg?.mcp) return;
+
+  // Registre des clients ayant chargé le module (pour élire le responder).
+  if (msg.evt === "companion_ready" && msg.user && !companions.has(msg.user)) {
+    companions.add(msg.user);
+    // handshake : on se re-signale à ce nouveau venu (une fois par inconnu).
+    emit({ evt: "companion_ready", user: game.user.id, data: { version: VERSION, responder: isResponder() } });
+  }
+
+  if (!msg.cmd) return; // on ignore les autres télémétries / nos propres réponses
   const { cmd, id, targets, args = {} } = msg;
 
   // Commandes « de scène » : chaque client ciblé exécute, pas de réponse unique.
@@ -259,8 +275,9 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", () => {
   game.socket.on(CHANNEL, onMessage);
+  companions.add(game.user.id); // je fais partie des clients qui ont chargé le module
   setupTelemetry();
-  // Signale sa présence au serveur MCP (qui le capte dans son buffer).
+  // Signale sa présence (registre des autres companions + buffer du serveur MCP).
   emit({ evt: "companion_ready", user: game.user.id, data: { version: VERSION, responder: isResponder() } });
   log(`v${VERSION} prêt — responder=${isResponder()} · canal ${CHANNEL}`);
 });
