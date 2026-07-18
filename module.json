@@ -2,16 +2,30 @@
   "id": "foundry-mcp-gateway-companion",
   "title": "Foundry MCP Companion",
   "description": "Optional companion for the foundry-mcp-gateway MCP server. Runs the client-side actions the socket protocol alone cannot reach: execute macros, real system rolls (with Dice So Nice), camera pan/ping, one-shot sounds, player notifications, Campaign Codex API, and client telemetry (who sees what, selected/targeted tokens). No configuration needed — install it, and your MCP client gains client_* tools.",
-  "version": "0.1.1",
-  "authors": [{ "name": "wanoo" }],
+  "version": "0.2.0",
+  "authors": [
+    {
+      "name": "wanoo"
+    }
+  ],
   "compatibility": {
     "minimum": "12",
     "verified": "13"
   },
-  "esmodules": ["scripts/main.mjs"],
+  "esmodules": [
+    "scripts/main.mjs"
+  ],
   "languages": [
-    { "lang": "en", "name": "English", "path": "lang/en.json" },
-    { "lang": "fr", "name": "Français", "path": "lang/fr.json" }
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json"
+    }
   ],
   "socket": true,
   "url": "https://github.com/wanoo/foundry-mcp-gateway-companion",

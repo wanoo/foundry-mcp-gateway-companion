@@ -17,10 +17,11 @@
 
 import { CC_FAMILY_HANDLERS } from "./addons/cc-family.mjs";
 import { SCENE_FX_HANDLERS } from "./addons/scene-fx.mjs";
+import { INSIGHT_HANDLERS } from "./addons/insight.mjs";
 
 const CHANNEL = "module.foundry-mcp-gateway-companion";
 const MODULE_ID = "foundry-mcp-gateway-companion";
-const VERSION = "0.1.1";
+const VERSION = "0.2.0";
 
 /* ---------------------------------------------------------------- utilities */
 
@@ -231,7 +232,7 @@ const UNIQUE_HANDLERS = {
 };
 
 // Fusionne les handlers des fichiers d'addons dédiés (famille CC + FX de scène).
-Object.assign(UNIQUE_HANDLERS, CC_FAMILY_HANDLERS, SCENE_FX_HANDLERS);
+Object.assign(UNIQUE_HANDLERS, CC_FAMILY_HANDLERS, SCENE_FX_HANDLERS, INSIGHT_HANDLERS);
 
 /* ---------------------------------------------------------------- telemetry */
 
