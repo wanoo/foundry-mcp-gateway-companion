@@ -1,69 +1,116 @@
-# Foundry MCP Companion
+<div align="center">
 
-An **optional** companion module for the [foundry-mcp-gateway](https://github.com/wanoo/foundry-mcp-gateway)
-MCP server.
+# 🧩 Foundry MCP Companion
 
-The MCP server talks to Foundry through the **socket protocol**, which can only
-touch *documents*. This module runs in the **browser** — where the full
-`game.*` client API lives — and executes the client-side actions the server
-delegates to it. Install it, and your MCP client (Claude, etc.) gains a set of
-`client_*` tools.
+**The browser half of [foundry-mcp-gateway](https://github.com/wanoo/foundry-mcp-gateway).**
 
-**You don't need it** to use foundry-mcp-gateway — but it unlocks the things a
-socket client fundamentally cannot do.
+The MCP server talks to Foundry through the socket protocol, which only reaches
+*documents*. This tiny module runs in the **GM's browser** — where the full
+`game.*` API lives — and executes what the server delegates. Install it and your
+AI gains **26 `client_*` tools**: it can *see* the table, *talk* to players, and
+*stage* effects.
 
-## What it unlocks
+[![Foundry](https://img.shields.io/badge/Foundry%20VTT-v12%2B-ff6400)](https://foundryvtt.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-| MCP tool | What it does (client-side) |
-|---|---|
-| `client_run_macro` | Run any Foundry macro on the GM client — the universal key to anything scriptable |
-| `client_run_script` | Run arbitrary JS on the GM client (⚠️ off by default, enable in settings) |
-| `client_roll_pool_native` | *starwarsffg*: roll a pool with the real FFG engine — native chat card + **Dice So Nice** 3D dice on the table |
-| `client_pan_camera` / `client_ping` | Move / ping the players' cameras — "everyone look here" |
-| `client_play_sound` | One-shot dramatic sound (a stinger), no playlist needed |
-| `client_notify` | UI notification on the players' screens |
-| `client_show_document` | Open a sheet on the players' screens |
-| `client_play_effect` | A [Sequencer](https://foundryvtt.com/packages/sequencer) visual effect (if installed) |
-| `client_cc_convert` / `client_cc_export_obsidian` / `client_cc_open_toc` | [Campaign Codex](https://foundryvtt.com/packages/campaign-codex) client-side API (bulk-convert journals to CC sheets, export to Obsidian…) |
-| `client_get_state` + `get_events` | Telemetry: who views which scene, live token selections & targets |
+</div>
 
-All actions accept a `targets` argument (`all` / `gm` / `players` / list of user
-ids) so you can drive one player's screen or everyone's.
+---
 
-## How it works
+**You don't need it** to use foundry-mcp-gateway — without it the `client_*`
+tools time out with a clear message and everything else keeps working. But it
+unlocks what a socket client fundamentally cannot do.
 
-The module listens on the socket channel `module.foundry-mcp-gateway-companion`. The MCP
-server emits a command; a **single GM browser** (the "responder", elected
-deterministically) executes it and sends the result back — which the server
-catches in its event buffer. Scene actions (camera, ping, sound…) run on every
-targeted client. If no companion is installed, the `client_*` tools simply time
-out with a clear message — nothing else breaks.
+## 📦 Installation
 
-Optional integrations degrade gracefully: `client_roll_pool_native` needs the
-`starwarsffg` system, `client_play_effect` needs Sequencer, the `client_cc_*`
-tools need Campaign Codex. Dice So Nice is used automatically if present.
-
-## Installation
-
-Install via the manifest URL in Foundry (*Add-on Modules → Install Module →
-Manifest URL*):
+*Add-on Modules → Install Module → Manifest URL*:
 
 ```
 https://github.com/wanoo/foundry-mcp-gateway-companion/releases/latest/download/module.json
 ```
 
-Then enable it in your world. A **GM browser must be connected** for the
-`client_*` tools to work (that browser is what executes the actions). No other
-configuration is required.
+Enable it in your world. A **GM browser must be connected** (and its tab awake —
+browsers freeze background tabs) for the `client_*` tools to respond. No other
+configuration needed.
 
-### Settings
+## ✨ What it unlocks
 
-- **Relay client telemetry** (per client, default on): report this client's
-  token selections, targets and viewed scene to the MCP server.
-- **Allow remote script execution** (world, default **off**): let the MCP server
-  run arbitrary JavaScript via `client_run_script`. Powerful but dangerous —
-  only enable it if you trust every MCP client connected to your gateway.
+### 👁️ Perception — the AI sees your table
 
-## License
+| Handler | MCP tool | What |
+|---|---|---|
+| `capture` | 📸 `client_capture` | Screenshot of the GM's view, returned as a real image |
+| `scene_report` | 🗺️ `client_scene_report` | Tokens with grid coords, disposition, **real** visibility, doors, lights |
+| `get_derived` | 📊 `client_get_derived` | **Prepared** sheet values (post-`prepareData` + active effects) |
+| `enrich` | 🔗 `client_enrich` | Enriched HTML: `@UUID` resolved, inline rolls, GM secrets |
+| `search` | 🔎 `client_search` | Name search across every collection |
+| `babele` | 🌍 `client_babele` | [Babele](https://foundryvtt.com/packages/babele) translated view, reverse search by displayed name |
+
+### 🗣️ Interaction
+
+| Handler | MCP tool | What |
+|---|---|---|
+| `ask` | ❓ `client_ask` | A real dialog on a player's screen — their answer comes back |
+| `notify` / `ping_at` / `pan` | 📣 `client_notify` 🔔 `client_ping` 🎥 `client_pan_camera` | Notifications, map pings, camera moves — targetable per client |
+| `show_document` | 📜 `client_show_document` | Open a sheet on targeted clients |
+| `select` / `target` / `fog` | 🎯 `client_select` `client_target` 🌫️ `client_fog` | Real selection, crosshair targets, fog reset |
+| `get_client_state` / `ping_module` | 📡 `client_get_state` `client_status` | Who's online & watching what · health + detected deps |
+
+### 🌦️ Stagecraft
+
+| Handler | MCP tool | Needs |
+|---|---|---|
+| `weather` / `weather_types` | 🌧️ `client_weather` | [FXMaster](https://foundryvtt.com/packages/fxmaster) |
+| `play_effect` / `seq_between` / `seq_sound` / `effect_catalog` | ✨ `client_play_effect` `client_seq_between` `client_seq_sound` 🗂️ `client_effect_catalog` | [Sequencer](https://foundryvtt.com/packages/sequencer) |
+| `token_fx` / `token_fx_presets` | 🎇 `client_token_fx` | [Token Magic FX](https://foundryvtt.com/packages/tokenmagic) |
+| `mat_trigger` | 🎞️ `client_mat_trigger` | [Monk's Active Tiles](https://foundryvtt.com/packages/monks-active-tiles) |
+| `play_sound` | 🔊 `client_play_sound` | — |
+
+### 🚀 Power tools
+
+| Handler | MCP tool | What |
+|---|---|---|
+| `run_macro` | `client_run_macro` | Any macro, by id or name — the universal key |
+| `run_script` | `client_run_script` | Arbitrary JS (⚠️ **off by default**, world setting) |
+| `roll_pool_native` | 🎲 `client_roll_pool_native` | *starwarsffg*: real FFG engine + **Dice So Nice** 3D dice |
+| `cc_convert` / `cc_export_obsidian` / `cc_open_toc` | `client_cc_*` | [Campaign Codex](https://foundryvtt.com/packages/campaign-codex) client API |
+| `al_open` · `mc_set_time` / `mc_open` | `client_al_open` `client_mc_*` | Asset Librarian · Mini Calendar |
+
+Every integration degrades gracefully — if the target module isn't active, the
+tool answers with a clear error instead of breaking anything.
+
+## ⚙️ How it works
+
+The module listens on the socket channel `module.foundry-mcp-gateway-companion`.
+Commands `{cmd, id, targets?, args}` arrive from the MCP server; results go back
+as `{reply: id, ok, result|error}`, which the server catches in its event buffer.
+
+Three delivery modes:
+
+- **scene** — every targeted client executes (camera, pings, sounds, notifications);
+- **addressed** — the *targeted* client executes **and answers** (`ask`);
+- **unique** — a single GM **responder** executes (API calls, rolls, captures).
+  The responder is elected among the clients that actually loaded this module —
+  headless GM connections (like the MCP bot itself) are never elected.
+
+Telemetry (optional, per client): token selections, targets, viewed scene and
+combat turns stream to the server's event feed.
+
+## 🔒 Settings
+
+- **Relay client telemetry** *(client, default on)* — report selections/targets/scene.
+- **Allow remote script execution** *(world, default **off**)* — enables
+  `client_run_script`. Only turn it on if you trust every MCP client connected
+  to your gateway.
+
+## 🤝 Contributing
+
+Adding an addon integration = one handler here + one tool in
+[the server repo](https://github.com/wanoo/foundry-mcp-gateway). The full guide
+(including how to pick the delivery mode and the probe-before-you-write rule) is
+in the server's [CONTRIBUTING.md](https://github.com/wanoo/foundry-mcp-gateway/blob/main/CONTRIBUTING.md).
+Handlers live in `scripts/addons/*.mjs`, merged into the dispatcher by `main.mjs`.
+
+## 📜 License
 
 MIT.
