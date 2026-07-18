@@ -138,6 +138,45 @@ export const INSIGHT_HANDLERS = {
     };
   },
 
+  // ------------------------------------------------------------------ babele
+  // La vue TRADUITE des compendiums (Babele) : le serveur lit la source (souvent
+  // l'anglais), le joueur voit sa langue. Sans pack : liste des packs traduits.
+  async babele({ pack, id, name, limit = 100 }) {
+    const B = globalThis.Babele;
+    if (!B?.get) throw new Error("babele module not active");
+    const b = B.get();
+    if (!pack) {
+      const translated = game.packs.filter((p) => b.isTranslated(p.collection));
+      return {
+        version: game.modules.get("babele")?.version ?? null,
+        count: translated.length,
+        packs: translated.map((p) => p.collection),
+      };
+    }
+    const compendium = game.packs.get(pack);
+    if (!compendium) throw new Error(`Compendium not found: ${pack}`);
+    if (!b.isTranslated(compendium.collection)) {
+      return { pack, translated: false, hint: "source == displayed for this pack" };
+    }
+    // document complet traduit…
+    if (id || name) {
+      const index = await compendium.getIndex();
+      const entry = id
+        ? index.get(id)
+        : [...index].find((e) => e.name === name);
+      if (!entry) throw new Error(`Document not found in ${pack}: ${id ?? name}`);
+      const doc = await compendium.getDocument(entry._id);
+      return { pack, translated: true, document: b.translate(compendium.collection, doc.toObject(true)) };
+    }
+    // …ou l'index traduit (source → affiché).
+    const index = [...(await compendium.getIndex())].slice(0, limit);
+    const t = b.translateIndex(index, compendium.collection);
+    return {
+      pack, translated: true, count: index.length,
+      index: index.map((e, i) => ({ _id: e._id, source: e.name, displayed: t[i]?.name ?? e.name })),
+    };
+  },
+
   // ------------------------------------------------------------ scene_report
   async scene_report({ include_walls = false }) {
     if (!canvas.scene) throw new Error("no active scene on this client");
