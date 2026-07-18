@@ -18,10 +18,12 @@
 import { CC_FAMILY_HANDLERS } from "./addons/cc-family.mjs";
 import { SCENE_FX_HANDLERS } from "./addons/scene-fx.mjs";
 import { INSIGHT_HANDLERS } from "./addons/insight.mjs";
+import { ASK_HANDLERS, TABLE_HANDLERS } from "./addons/table.mjs";
+import { AMBIENCE_HANDLERS } from "./addons/ambience.mjs";
 
 const CHANNEL = "module.foundry-mcp-gateway-companion";
 const MODULE_ID = "foundry-mcp-gateway-companion";
-const VERSION = "0.2.0";
+const VERSION = "0.3.0";
 
 /* ---------------------------------------------------------------- utilities */
 
@@ -101,6 +103,21 @@ async function onMessage(msg) {
     return;
   }
 
+  // Commandes « adressées » : c'est le client CIBLÉ qui exécute ET qui répond
+  // (poser une question à un joueur n'a de sens que chez lui). Le responder ne
+  // s'en mêle pas, sinon il répondrait à la place de l'intéressé.
+  if (ASK_HANDLERS[cmd]) {
+    if (!shouldRunHere(targets) || !id || handled.has(id)) return;
+    handled.add(id);
+    try {
+      reply(id, true, await ASK_HANDLERS[cmd](args));
+    } catch (e) {
+      console.error(`[MCP Companion] ${cmd}:`, e);
+      reply(id, false, e?.message ?? e);
+    }
+    return;
+  }
+
   // Commandes à réponse unique : seul le responder exécute.
   if (!id || handled.has(id)) return;
   if (!isResponder()) return;
@@ -161,11 +178,19 @@ const UNIQUE_HANDLERS = {
       version: VERSION,
       responder: game.user.name,
       system: game.system.id,
-      dependencies: {
-        diceSoNice: game.modules.get("dice-so-nice")?.active ?? false,
-        campaignCodex: game.modules.get("campaign-codex")?.active ?? false,
-        sequencer: game.modules.get("sequencer")?.active ?? false,
-      },
+      // Ce qui conditionne la disponibilité des outils optionnels.
+      dependencies: Object.fromEntries(
+        [
+          ["dice-so-nice", "diceSoNice"],
+          ["campaign-codex", "campaignCodex"],
+          ["sequencer", "sequencer"],
+          ["fxmaster", "fxmaster"],
+          ["tokenmagic", "tokenMagic"],
+          ["monks-active-tiles", "monksActiveTiles"],
+          ["asset-librarian", "assetLibrarian"],
+          ["wgtgm-mini-calendar", "miniCalendar"],
+        ].map(([id, key]) => [key, game.modules.get(id)?.active ?? false]),
+      ),
     };
   },
 
@@ -232,7 +257,14 @@ const UNIQUE_HANDLERS = {
 };
 
 // Fusionne les handlers des fichiers d'addons dédiés (famille CC + FX de scène).
-Object.assign(UNIQUE_HANDLERS, CC_FAMILY_HANDLERS, SCENE_FX_HANDLERS, INSIGHT_HANDLERS);
+Object.assign(
+  UNIQUE_HANDLERS,
+  CC_FAMILY_HANDLERS,
+  SCENE_FX_HANDLERS,
+  INSIGHT_HANDLERS,
+  TABLE_HANDLERS,
+  AMBIENCE_HANDLERS,
+);
 
 /* ---------------------------------------------------------------- telemetry */
 
