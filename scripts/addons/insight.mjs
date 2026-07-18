@@ -140,11 +140,34 @@ export const INSIGHT_HANDLERS = {
 
   // ------------------------------------------------------------------ babele
   // La vue TRADUITE des compendiums (Babele) : le serveur lit la source (souvent
-  // l'anglais), le joueur voit sa langue. Sans pack : liste des packs traduits.
-  async babele({ pack, id, name, limit = 100 }) {
+  // l'anglais), le joueur voit sa langue. Sans argument : liste des packs
+  // traduits. `query` : recherche INVERSE (nom affiché OU source) sur tous les
+  // packs traduits — indispensable pour retrouver un document depuis le nom que
+  // les joueurs emploient. ~20 ms sur 27 packs (index en cache).
+  async babele({ pack, id, name, ids, query, limit = 100 }) {
     const B = globalThis.Babele;
     if (!B?.get) throw new Error("babele module not active");
     const b = B.get();
+    if (query) {
+      const needle = query.toLowerCase();
+      const packs = pack
+        ? [game.packs.get(pack)].filter(Boolean)
+        : game.packs.filter((p) => b.isTranslated(p.collection));
+      const hits = [];
+      for (const p of packs) {
+        const index = [...(await p.getIndex())];
+        const t = b.isTranslated(p.collection) ? b.translateIndex(index, p.collection) : index;
+        index.forEach((e, i) => {
+          const displayed = t[i]?.name ?? e.name;
+          if (e.name.toLowerCase().includes(needle) || displayed.toLowerCase().includes(needle)) {
+            hits.push({ pack: p.collection, _id: e._id, source: e.name, displayed });
+          }
+        });
+        if (hits.length >= limit) break;
+      }
+      return { query, count: Math.min(hits.length, limit), truncated: hits.length > limit,
+               hits: hits.slice(0, limit) };
+    }
     if (!pack) {
       const translated = game.packs.filter((p) => b.isTranslated(p.collection));
       return {
@@ -158,15 +181,22 @@ export const INSIGHT_HANDLERS = {
     if (!b.isTranslated(compendium.collection)) {
       return { pack, translated: false, hint: "source == displayed for this pack" };
     }
-    // document complet traduit…
-    if (id || name) {
+    // document(s) complet(s) traduit(s)…
+    if (id || name || ids?.length) {
       const index = await compendium.getIndex();
-      const entry = id
-        ? index.get(id)
-        : [...index].find((e) => e.name === name);
-      if (!entry) throw new Error(`Document not found in ${pack}: ${id ?? name}`);
-      const doc = await compendium.getDocument(entry._id);
-      return { pack, translated: true, document: b.translate(compendium.collection, doc.toObject(true)) };
+      const wanted = ids?.length
+        ? ids
+        : [id ?? [...index].find((e) => e.name === name)?._id].filter(Boolean);
+      if (!wanted.length) throw new Error(`Document not found in ${pack}: ${id ?? name}`);
+      const documents = [];
+      for (const docId of wanted) {
+        const doc = await compendium.getDocument(docId);
+        if (!doc) throw new Error(`Document not found in ${pack}: ${docId}`);
+        documents.push(b.translate(compendium.collection, doc.toObject(true)));
+      }
+      return ids?.length
+        ? { pack, translated: true, documents }
+        : { pack, translated: true, document: documents[0] };
     }
     // …ou l'index traduit (source → affiché).
     const index = [...(await compendium.getIndex())].slice(0, limit);

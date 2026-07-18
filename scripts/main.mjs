@@ -23,7 +23,7 @@ import { AMBIENCE_HANDLERS } from "./addons/ambience.mjs";
 
 const CHANNEL = "module.foundry-mcp-gateway-companion";
 const MODULE_ID = "foundry-mcp-gateway-companion";
-const VERSION = "0.4.0";
+const VERSION = "0.4.1";
 
 /* ---------------------------------------------------------------- utilities */
 
