@@ -72,6 +72,7 @@ configuration needed.
 |---|---|---|
 | `run_macro` | `client_run_macro` | Any macro, by id or name — the universal key |
 | `run_script` | `client_run_script` | Arbitrary JS (⚠️ **off by default**, world setting) |
+| `roll_formula` | 🎲 `client_roll_formula` | **Any system**: any formula through Foundry's real `Roll` engine — native chat card, Dice So Nice, actor roll data, per-die results |
 | `roll_pool_native` | 🎲 `client_roll_pool_native` | *starwarsffg*: real FFG engine + **Dice So Nice** 3D dice |
 | `cc_convert` / `cc_export_obsidian` / `cc_open_toc` | `client_cc_*` | [Campaign Codex](https://foundryvtt.com/packages/campaign-codex) client API |
 | `al_open` · `mc_set_time` / `mc_open` | `client_al_open` `client_mc_*` | Asset Librarian · Mini Calendar |

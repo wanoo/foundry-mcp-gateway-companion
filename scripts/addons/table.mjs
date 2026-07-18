@@ -46,6 +46,31 @@ export const ASK_HANDLERS = {
 };
 
 export const TABLE_HANDLERS = {
+  // ------------------------------------------------------------- jet générique
+  // Le vrai moteur Roll de Foundry : marche pour TOUS les systèmes, poste la
+  // carte de chat native et déclenche Dice So Nice si présent.
+  async roll_formula({ formula, flavor, actorId, whisper_gm = false, roll_data = {} }) {
+    if (!formula) throw new Error("'formula' is required (e.g. 2d6+3)");
+    const actor = actorId ? game.actors.get(actorId) : null;
+    const data = { ...(actor?.getRollData?.() ?? {}), ...roll_data };
+    const roll = new Roll(formula, data);
+    await roll.evaluate();
+    const speaker = actor ? ChatMessage.getSpeaker({ actor }) : ChatMessage.getSpeaker();
+    const message = { speaker, flavor: flavor ?? `Jet MCP : ${formula}` };
+    if (whisper_gm) message.whisper = ChatMessage.getWhisperRecipients("GM").map((u) => u.id);
+    await roll.toMessage(message);
+    return {
+      formula: roll.formula,
+      total: roll.total,
+      // le détail dé par dé, pour raisonner sur le résultat
+      dice: roll.dice.map((d) => ({
+        faces: d.faces, number: d.number,
+        results: d.results.map((r) => ({ result: r.result, active: r.active })),
+      })),
+      actor: actor?.name ?? null,
+    };
+  },
+
   // ------------------------------------------------------------ select/target
   async select({ tokens = [], release_others = true }) {
     if (release_others) canvas.tokens.releaseAll();
