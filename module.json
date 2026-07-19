@@ -2,7 +2,7 @@
   "id": "foundry-mcp-gateway-companion",
   "title": "Foundry MCP Companion",
   "description": "Browser-side companion for the foundry-mcp-gateway MCP server. The gateway talks to Foundry over the socket protocol, which only reaches documents; this module runs in the Gamemaster's browser and executes what the socket cannot: read prepared sheet values, screenshot the canvas, ask a player a question and get their answer, run macros, roll with the real system engine and Dice So Nice, drive weather and effects. Install it and your MCP client gains 36 client_* tools. Optional — without it, everything else still works.",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "authors": [
     {
       "name": "wanoo",
@@ -70,15 +70,9 @@
   "socket": true,
   "url": "https://github.com/wanoo/foundry-mcp-gateway-companion",
   "manifest": "https://github.com/wanoo/foundry-mcp-gateway-companion/releases/latest/download/module.json",
-  "download": "https://github.com/wanoo/foundry-mcp-gateway-companion/releases/download/v1.5.0/module.zip",
+  "download": "https://github.com/wanoo/foundry-mcp-gateway-companion/releases/download/v1.5.1/module.zip",
   "readme": "https://github.com/wanoo/foundry-mcp-gateway-companion/blob/main/README.md",
   "changelog": "https://github.com/wanoo/foundry-mcp-gateway-companion/releases",
   "bugs": "https://github.com/wanoo/foundry-mcp-gateway-companion/issues",
-  "license": "https://github.com/wanoo/foundry-mcp-gateway-companion/blob/main/LICENSE",
-  "media": [
-    {
-      "type": "cover",
-      "url": "https://raw.githubusercontent.com/wanoo/foundry-mcp-gateway-companion/main/assets/banner.png"
-    }
-  ]
+  "license": "https://github.com/wanoo/foundry-mcp-gateway-companion/blob/main/LICENSE"
 }

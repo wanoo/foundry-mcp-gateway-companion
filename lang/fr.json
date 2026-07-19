@@ -1,12 +1,13 @@
 {
   "MCPCOMPANION.SettingTelemetry": "Relayer la télémétrie du client",
   "MCPCOMPANION.SettingTelemetryHint": "Signale au serveur MCP vos sélections de tokens, vos cibles et la scène affichée (par client). Désactivez pour garder ce client privé.",
-  "MCPCOMPANION.SettingRunScript": "Autoriser l'exécution de script distante",
-  "MCPCOMPANION.SettingRunScriptHint": "Permet au serveur MCP d'exécuter du JavaScript arbitraire sur le client MJ via l'outil client_run_script. Puissant mais dangereux — laissez désactivé sauf si vous faites confiance à tous les clients MCP.",
+  "MCPCOMPANION.SettingRunScript": "Autoriser l'exécution de script distante (dangereux)",
+  "MCPCOMPANION.SettingRunScriptHint": "DÉSACTIVÉ par défaut, et c'est en général ce qu'il faut garder. Une fois actif, n'importe quel client MCP connecté à votre passerelle peut exécuter du JavaScript arbitraire dans ce navigateur avec vos droits de MJ : lire et modifier tous les documents, agir en votre nom, atteindre tout ce que votre session atteint. Ce code est souvent écrit par un modèle d'IA et n'est relu par personne avant de s'exécuter. Chaque exécution est intégralement affichée dans la console (F12) et annoncée à l'écran, pour que vous puissiez l'auditer. N'activez que si vous faites confiance à tous les clients détenant le secret de votre passerelle, et désactivez ensuite.",
   "MCPCOMPANION.AskTitle": "Question du MJ",
   "MCPCOMPANION.RollFlavor": "Jet",
   "MCPCOMPANION.ViaMCP": "via MCP",
   "MCPCOMPANION.Yes": "Oui",
   "MCPCOMPANION.No": "Non",
-  "MCPCOMPANION.MCPRoll": "Jet MCP"
+  "MCPCOMPANION.MCPRoll": "Jet MCP",
+  "MCPCOMPANION.ScriptRan": "Un script distant a été exécuté sur ce client — son code complet est dans la console (F12)."
 }

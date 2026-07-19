@@ -75,7 +75,10 @@ jobs:
       - name: Build the zip
         run: |
           # -x exclut les saletés macOS : le zip livré en contenait un .DS_Store.
-          zip -r module.zip module.json scripts lang assets README.md LICENSE \
+          # `assets/` (bannière) reste hors du paquet : c'est un visuel de dépôt,
+          # pas un asset livré aux utilisateurs — la politique de contenu Foundry
+          # encadre strictement les médias embarqués.
+          zip -r module.zip module.json scripts lang README.md LICENSE \
             -x "*.DS_Store" "__MACOSX/*"
           unzip -l module.zip
 

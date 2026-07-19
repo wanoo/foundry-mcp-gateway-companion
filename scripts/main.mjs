@@ -23,7 +23,7 @@ import { AMBIENCE_HANDLERS } from "./addons/ambience.mjs";
 
 const CHANNEL = "module.foundry-mcp-gateway-companion";
 const MODULE_ID = "foundry-mcp-gateway-companion";
-const VERSION = "1.5.0";
+const VERSION = "1.5.1";
 
 /* ---------------------------------------------------------------- utilities */
 
@@ -203,8 +203,20 @@ const UNIQUE_HANDLERS = {
 
   async run_script({ code }) {
     if (!game.settings.get(MODULE_ID, "allowRunScript")) {
-      throw new Error("run_script is disabled (enable it in the module settings — arbitrary code execution)");
+      throw new Error(
+        "run_script is disabled — a Gamemaster must enable it in this module's settings. " +
+          "It executes arbitrary JavaScript with GM rights and is off by default on purpose."
+      );
     }
+    // Le code s'exécute sans interruption (c'est le but de l'outil), mais jamais
+    // en aveugle : il est affiché en entier AVANT, et son exécution annoncée.
+    // Le MJ peut ainsi auditer après coup ce qui a tourné chez lui.
+    console.warn(
+      `%c[MCP Companion] remote script — executing with GM rights:`,
+      "color:#f66;font-weight:bold"
+    );
+    console.warn(code);
+    ui.notifications.warn(game.i18n.localize("MCPCOMPANION.ScriptRan"));
     const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
     const fn = new AsyncFunction("game", "canvas", "ui", code);
     const out = await fn(game, canvas, ui);
