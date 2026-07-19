@@ -73,7 +73,7 @@ configuration needed.
 | Handler | MCP tool | What |
 |---|---|---|
 | `run_macro` | `client_run_macro` | Any macro, by id or name — the universal key |
-| `run_script` | `client_run_script` | Arbitrary JS (⚠️ **off by default**, world setting) |
+| `run_script` | `client_run_script` | Arbitrary JS — **off by default**; a GM picks *ask me first* (shows the code, waits for approval) or *automatic*. Always logged to the console |
 | `roll_formula` | 🎲 `client_roll_formula` | **Any system**: any formula through Foundry's real `Roll` engine — native chat card, Dice So Nice, actor roll data, per-die results |
 | `roll_pool_native` | 🎲 `client_roll_pool_native` | *starwarsffg*: real FFG engine + **Dice So Nice** 3D dice |
 | `cc_convert` / `cc_export_obsidian` / `cc_open_toc` | `client_cc_*` | [Campaign Codex](https://foundryvtt.com/packages/campaign-codex) client API |
@@ -102,9 +102,11 @@ combat turns stream to the server's event feed.
 ## 🔒 Settings
 
 - **Relay client telemetry** *(client, default on)* — report selections/targets/scene.
-- **Allow remote script execution** *(world, default **off**)* — enables
-  `client_run_script`. Only turn it on if you trust every MCP client connected
-  to your gateway.
+- **Remote script execution** *(world, default **off**)* — three states:
+  disabled, *ask me first* (the code is shown in a dialog and waits for your
+  approval; no answer within 25 s counts as a refusal), or *automatic* (runs
+  without prompting). The code is printed in full to the browser console in
+  every mode, so you can always audit what ran with your rights.
 
 ## 🤝 Contributing
 

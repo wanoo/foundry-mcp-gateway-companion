@@ -23,7 +23,7 @@ import { AMBIENCE_HANDLERS } from "./addons/ambience.mjs";
 
 const CHANNEL = "module.foundry-mcp-gateway-companion";
 const MODULE_ID = "foundry-mcp-gateway-companion";
-const VERSION = "1.5.1";
+const VERSION = "1.5.2";
 
 /* ---------------------------------------------------------------- utilities */
 
@@ -202,21 +202,45 @@ const UNIQUE_HANDLERS = {
   },
 
   async run_script({ code }) {
-    if (!game.settings.get(MODULE_ID, "allowRunScript")) {
+    const mode = game.settings.get(MODULE_ID, "runScriptMode");
+    if (mode === "off") {
       throw new Error(
         "run_script is disabled — a Gamemaster must enable it in this module's settings. " +
           "It executes arbitrary JavaScript with GM rights and is off by default on purpose."
       );
     }
-    // Le code s'exécute sans interruption (c'est le but de l'outil), mais jamais
-    // en aveugle : il est affiché en entier AVANT, et son exécution annoncée.
-    // Le MJ peut ainsi auditer après coup ce qui a tourné chez lui.
+
+    // Le code est TOUJOURS tracé avant de tourner : même en mode automatique,
+    // le MJ doit pouvoir auditer après coup ce qui s'est exécuté chez lui.
     console.warn(
-      `%c[MCP Companion] remote script — executing with GM rights:`,
+      "%c[MCP Companion] remote script — executing with GM rights:",
       "color:#f66;font-weight:bold"
     );
     console.warn(code);
-    ui.notifications.warn(game.i18n.localize("MCPCOMPANION.ScriptRan"));
+
+    if (mode === "confirm") {
+      const D2 = foundry.applications?.api?.DialogV2;
+      if (!D2?.confirm) throw new Error("DialogV2 unavailable (Foundry v12+ required)");
+      const esc = foundry.utils?.escapeHTML ?? ((t) => t);
+      // On refuse passé le délai : un MJ absent ne vaut pas un accord, et
+      // l'appel MCP côté serveur expire de toute façon vers 30 s.
+      let timer;
+      const expiry = new Promise((resolve) => {
+        timer = setTimeout(() => resolve(false), 25000);
+      });
+      const asked = D2.confirm({
+        window: { title: game.i18n.localize("MCPCOMPANION.RunScriptConfirmTitle") },
+        content:
+          `<p>${game.i18n.localize("MCPCOMPANION.RunScriptConfirmBody")}</p>` +
+          `<pre style="max-height:22rem;overflow:auto;white-space:pre-wrap">${esc(code)}</pre>`,
+        rejectClose: false,
+        modal: true,
+      });
+      const ok = await Promise.race([asked, expiry]);
+      clearTimeout(timer);
+      if (!ok) throw new Error("script execution declined by the Gamemaster");
+    }
+
     const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
     const fn = new AsyncFunction("game", "canvas", "ui", code);
     const out = await fn(game, canvas, ui);
@@ -315,14 +339,32 @@ Hooks.once("init", () => {
     hint: "MCPCOMPANION.SettingTelemetryHint",
     scope: "client", config: true, type: Boolean, default: true,
   });
-  game.settings.register(MODULE_ID, "allowRunScript", {
+  game.settings.register(MODULE_ID, "runScriptMode", {
     name: "MCPCOMPANION.SettingRunScript",
     hint: "MCPCOMPANION.SettingRunScriptHint",
-    scope: "world", config: true, type: Boolean, default: false,
+    scope: "world", config: true, type: String, default: "off",
+    choices: {
+      off: "MCPCOMPANION.RunScriptOff",
+      confirm: "MCPCOMPANION.RunScriptConfirm",
+      auto: "MCPCOMPANION.RunScriptAuto",
+    },
+  });
+  // Ancien réglage booléen : gardé hors interface, uniquement pour migrer les
+  // mondes existants sans changer leur comportement (cf. hook ready).
+  game.settings.register(MODULE_ID, "allowRunScript", {
+    scope: "world", config: false, type: Boolean, default: false,
   });
 });
 
 Hooks.once("ready", () => {
+  // Migration : un monde qui avait autorisé l'exécution garde EXACTEMENT le
+  // comportement qu'il avait (silencieux) — on ne durcit pas un réglage dans
+  // le dos du MJ, on lui laisse choisir « confirm » s'il le souhaite.
+  if (game.user.isGM && game.settings.get(MODULE_ID, "allowRunScript")) {
+    game.settings.set(MODULE_ID, "runScriptMode", "auto");
+    game.settings.set(MODULE_ID, "allowRunScript", false);
+    log("réglage migré : exécution de script → mode automatique");
+  }
   game.socket.on(CHANNEL, onMessage);
   companions.add(game.user.id); // je fais partie des clients qui ont chargé le module
   setupTelemetry();

@@ -1,13 +1,17 @@
 {
   "MCPCOMPANION.SettingTelemetry": "Relayer la télémétrie du client",
   "MCPCOMPANION.SettingTelemetryHint": "Signale au serveur MCP vos sélections de tokens, vos cibles et la scène affichée (par client). Désactivez pour garder ce client privé.",
-  "MCPCOMPANION.SettingRunScript": "Autoriser l'exécution de script distante (dangereux)",
-  "MCPCOMPANION.SettingRunScriptHint": "DÉSACTIVÉ par défaut, et c'est en général ce qu'il faut garder. Une fois actif, n'importe quel client MCP connecté à votre passerelle peut exécuter du JavaScript arbitraire dans ce navigateur avec vos droits de MJ : lire et modifier tous les documents, agir en votre nom, atteindre tout ce que votre session atteint. Ce code est souvent écrit par un modèle d'IA et n'est relu par personne avant de s'exécuter. Chaque exécution est intégralement affichée dans la console (F12) et annoncée à l'écran, pour que vous puissiez l'auditer. N'activez que si vous faites confiance à tous les clients détenant le secret de votre passerelle, et désactivez ensuite.",
+  "MCPCOMPANION.SettingRunScript": "Exécution de script distante",
+  "MCPCOMPANION.SettingRunScriptHint": "Permet à un client MCP connecté d'exécuter du JavaScript arbitraire dans ce navigateur avec vos droits de MJ : lire et modifier tous les documents, agir en votre nom, atteindre tout ce que votre session atteint. Ce code est souvent écrit par un modèle d'IA et personne ne le relit avant qu'il ne tourne. Chaque exécution est intégralement affichée dans la console du navigateur (F12), quel que soit le mode, pour que vous puissiez l'auditer. Laissez désactivé sauf si vous faites confiance à tous les clients détenant le secret de votre passerelle.",
   "MCPCOMPANION.AskTitle": "Question du MJ",
   "MCPCOMPANION.RollFlavor": "Jet",
   "MCPCOMPANION.ViaMCP": "via MCP",
   "MCPCOMPANION.Yes": "Oui",
   "MCPCOMPANION.No": "Non",
   "MCPCOMPANION.MCPRoll": "Jet MCP",
-  "MCPCOMPANION.ScriptRan": "Un script distant a été exécuté sur ce client — son code complet est dans la console (F12)."
+  "MCPCOMPANION.RunScriptOff": "Désactivé (recommandé)",
+  "MCPCOMPANION.RunScriptConfirm": "Me demander — afficher le code et attendre mon accord",
+  "MCPCOMPANION.RunScriptAuto": "Exécuter automatiquement — sans demande, trace en console",
+  "MCPCOMPANION.RunScriptConfirmTitle": "Exécuter ce script ?",
+  "MCPCOMPANION.RunScriptConfirmBody": "Un client MCP connecté demande à exécuter ce code avec vos droits de MJ. Lisez-le avant d'accepter — refuser est sans risque, le client reçoit simplement un refus."
 }

@@ -1,13 +1,17 @@
 {
   "MCPCOMPANION.SettingTelemetry": "Relay client telemetry",
   "MCPCOMPANION.SettingTelemetryHint": "Report your token selections, targets and viewed scene to the MCP server (per-client). Turn off to keep this client private.",
-  "MCPCOMPANION.SettingRunScript": "Allow remote script execution (dangerous)",
-  "MCPCOMPANION.SettingRunScriptHint": "OFF by default, and it should usually stay off. When on, any MCP client connected to your gateway can run arbitrary JavaScript in this browser with your Gamemaster rights: read and alter every document, act as you, reach anything your session can reach. That code is often written by an AI model and is NOT reviewed by anyone before it runs. Each execution is printed in full to the browser console (F12) and announced on screen, so you can audit what ran. Only enable it if you trust every client holding your gateway secret, and turn it back off when you're done.",
+  "MCPCOMPANION.SettingRunScript": "Remote script execution",
+  "MCPCOMPANION.SettingRunScriptHint": "Lets a connected MCP client run arbitrary JavaScript in this browser with your Gamemaster rights: read and alter every document, act as you, reach anything your session reaches. That code is often written by an AI model and nobody reviews it before it runs. Every execution is printed in full to the browser console (F12) in all modes, so you can audit what ran. Leave it disabled unless you trust every client holding your gateway secret.",
   "MCPCOMPANION.AskTitle": "A question from the GM",
   "MCPCOMPANION.RollFlavor": "Roll",
   "MCPCOMPANION.ViaMCP": "via MCP",
   "MCPCOMPANION.Yes": "Yes",
   "MCPCOMPANION.No": "No",
   "MCPCOMPANION.MCPRoll": "MCP roll",
-  "MCPCOMPANION.ScriptRan": "A remote script was executed on this client — see the console (F12) for its full source."
+  "MCPCOMPANION.RunScriptOff": "Disabled (recommended)",
+  "MCPCOMPANION.RunScriptConfirm": "Ask me first — show the code and wait for my approval",
+  "MCPCOMPANION.RunScriptAuto": "Run automatically — no prompt, console log only",
+  "MCPCOMPANION.RunScriptConfirmTitle": "Run this script?",
+  "MCPCOMPANION.RunScriptConfirmBody": "A connected MCP client is asking to run this code with your Gamemaster rights. Read it before approving — declining is safe, the client is simply told no."
 }
