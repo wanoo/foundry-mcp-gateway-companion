@@ -116,9 +116,10 @@ Adding an addon integration = one handler here + one tool in
 in the server's [CONTRIBUTING.md](https://github.com/wanoo/foundry-mcp-gateway/blob/main/CONTRIBUTING.md).
 Handlers live in `scripts/addons/*.mjs`, merged into the dispatcher by `main.mjs`.
 
-**Versions are shared with the gateway** — both carry the same number, so a
-mismatch tells you at a glance that one half is behind. `client_status` says
-which one.
+**Versions track the gateway** on major.minor — 1.5.x on both sides. A protocol
+change bumps the minor in both repositories; a fix confined to this module is a
+patch release here alone. `client_status` flags a drift only when major.minor
+differ, and says which half is behind.
 
 **User-facing strings go through `lang/en.json` + `lang/fr.json`.** Not just
 settings: dialog titles and chat flavour reach *players*, and CI fails if a key
