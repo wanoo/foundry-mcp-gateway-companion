@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: Syntax
+        run: for f in scripts/main.mjs scripts/addons/*.mjs; do node --check "$f"; done
+      - name: module.json is valid and coherent
+        run: |
+          jq empty module.json
+          in_js=$(grep -oE 'const VERSION = "[^"]+"' scripts/main.mjs | cut -d'"' -f2)
+          in_json=$(jq -r .version module.json)
+          [ "$in_js" = "$in_json" ] || { echo "::error::main.mjs=$in_js vs module.json=$in_json"; exit 1; }
+      - name: Translation keys are in sync
+        run: |
+          # Une clé présente d'un côté seulement affiche la clé brute à l'écran.
+          diff <(jq -r 'keys[]' lang/en.json | sort) <(jq -r 'keys[]' lang/fr.json | sort)
+      - name: Every localize() key exists
+        run: |
+          missing=0
+          for key in $(grep -ohE 'localize\("[^"]+"\)' scripts/main.mjs scripts/addons/*.mjs \
+                       | sed -E 's/localize\("([^"]+)"\)/\1/' | sort -u); do
+            jq -e --arg k "$key" 'has($k)' lang/en.json >/dev/null \
+              || { echo "::error::clé absente de lang/en.json : $key"; missing=1; }
+          done
+          exit $missing

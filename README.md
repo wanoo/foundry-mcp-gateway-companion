@@ -7,7 +7,7 @@
 The MCP server talks to Foundry through the socket protocol, which only reaches
 *documents*. This tiny module runs in the **GM's browser** — where the full
 `game.*` API lives — and executes what the server delegates. Install it and your
-AI gains **26 `client_*` tools**: it can *see* the table, *talk* to players, and
+AI gains **36 `client_*` tools**: it can *see* the table, *talk* to players, and
 *stage* effects.
 
 [![Foundry](https://img.shields.io/badge/Foundry%20VTT-v12%2B-ff6400)](https://foundryvtt.com)
@@ -111,6 +111,18 @@ Adding an addon integration = one handler here + one tool in
 (including how to pick the delivery mode and the probe-before-you-write rule) is
 in the server's [CONTRIBUTING.md](https://github.com/wanoo/foundry-mcp-gateway/blob/main/CONTRIBUTING.md).
 Handlers live in `scripts/addons/*.mjs`, merged into the dispatcher by `main.mjs`.
+
+**Versions are shared with the gateway** — both carry the same number, so a
+mismatch tells you at a glance that one half is behind. `client_status` says
+which one.
+
+**User-facing strings go through `lang/en.json` + `lang/fr.json`.** Not just
+settings: dialog titles and chat flavour reach *players*, and CI fails if a key
+is missing from either file.
+
+Releases are automated: bump `version` in `module.json` **and** `VERSION` in
+`main.mjs`, push to `main`, and the workflow tags, packages and publishes. See
+[docs/foundry-release.md](docs/foundry-release.md) for the registry side.
 
 ## 📜 License
 

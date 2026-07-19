@@ -2,5 +2,11 @@
   "MCPCOMPANION.SettingTelemetry": "Relayer la télémétrie du client",
   "MCPCOMPANION.SettingTelemetryHint": "Signale au serveur MCP vos sélections de tokens, vos cibles et la scène affichée (par client). Désactivez pour garder ce client privé.",
   "MCPCOMPANION.SettingRunScript": "Autoriser l'exécution de script distante",
-  "MCPCOMPANION.SettingRunScriptHint": "Permet au serveur MCP d'exécuter du JavaScript arbitraire sur le client MJ via l'outil client_run_script. Puissant mais dangereux — laissez désactivé sauf si vous faites confiance à tous les clients MCP."
+  "MCPCOMPANION.SettingRunScriptHint": "Permet au serveur MCP d'exécuter du JavaScript arbitraire sur le client MJ via l'outil client_run_script. Puissant mais dangereux — laissez désactivé sauf si vous faites confiance à tous les clients MCP.",
+  "MCPCOMPANION.AskTitle": "Question du MJ",
+  "MCPCOMPANION.RollFlavor": "Jet",
+  "MCPCOMPANION.ViaMCP": "via MCP",
+  "MCPCOMPANION.Yes": "Oui",
+  "MCPCOMPANION.No": "Non",
+  "MCPCOMPANION.MCPRoll": "Jet MCP"
 }

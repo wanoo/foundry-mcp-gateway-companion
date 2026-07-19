@@ -213,7 +213,8 @@ const UNIQUE_HANDLERS = {
 
   // starwarsffg : lance un pool DÉJÀ calculé (le serveur dérive la fiche) avec
   // le vrai moteur FFG + Dice So Nice, et poste la carte de chat native.
-  async roll_pool_native({ pool, description = "Jet", actorId }) {
+  async roll_pool_native({ pool, description, actorId }) {
+    description ??= game.i18n.localize("MCPCOMPANION.RollFlavor");
     const Pool = globalThis.DicePoolFFG;
     const RollFFG = game.ffg?.RollFFG;
     if (!Pool || !RollFFG) throw new Error("starwarsffg dice engine not available");
@@ -222,7 +223,10 @@ const UNIQUE_HANDLERS = {
     await roll.evaluate();
     const f = roll.ffg || {};
     const speaker = actorId ? { actor: actorId } : {};
-    await roll.toMessage({ speaker, flavor: `${description} — via MCP` });
+    await roll.toMessage({
+      speaker,
+      flavor: `${description} — ${game.i18n.localize("MCPCOMPANION.ViaMCP")}`,
+    });
     return {
       success: f.success || 0, failure: f.failure || 0,
       advantage: f.advantage || 0, threat: f.threat || 0,

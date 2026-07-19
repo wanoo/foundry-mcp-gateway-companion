@@ -2,5 +2,11 @@
   "MCPCOMPANION.SettingTelemetry": "Relay client telemetry",
   "MCPCOMPANION.SettingTelemetryHint": "Report your token selections, targets and viewed scene to the MCP server (per-client). Turn off to keep this client private.",
   "MCPCOMPANION.SettingRunScript": "Allow remote script execution",
-  "MCPCOMPANION.SettingRunScriptHint": "Let the MCP server run arbitrary JavaScript on the GM client via the client_run_script tool. Powerful but dangerous — leave off unless you trust every MCP client."
+  "MCPCOMPANION.SettingRunScriptHint": "Let the MCP server run arbitrary JavaScript on the GM client via the client_run_script tool. Powerful but dangerous — leave off unless you trust every MCP client.",
+  "MCPCOMPANION.AskTitle": "A question from the GM",
+  "MCPCOMPANION.RollFlavor": "Roll",
+  "MCPCOMPANION.ViaMCP": "via MCP",
+  "MCPCOMPANION.Yes": "Yes",
+  "MCPCOMPANION.No": "No",
+  "MCPCOMPANION.MCPRoll": "MCP roll"
 }

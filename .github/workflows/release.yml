@@ -1,0 +1,107 @@
+# Publication pilotée par la VERSION de module.json, comme le gateway.
+#
+# Livrer = changer `version` et pousser sur main. Le workflow tague, réécrit le
+# champ `download` en URL VERSIONNÉE (règle du registre Foundry : un download
+# pointant vers /latest/ empêche de réinstaller une ancienne version), fabrique
+# le zip et publie la release. Version inchangée : tout est sauté.
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      publish: ${{ steps.v.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - id: v
+        run: |
+          version=$(jq -r .version module.json)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if git rev-parse "v$version" >/dev/null 2>&1; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::v$version est déjà taguée — rien à publier."
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::Nouvelle version détectée : $version"
+          fi
+
+      # Les deux moitiés partagent un numéro de version : on prévient (sans
+      # bloquer) quand elles divergent, c'est le signal d'un protocole désaccordé.
+      - name: Warn on version drift with the gateway
+        continue-on-error: true
+        run: |
+          mine=$(jq -r .version module.json | cut -d. -f1,2)
+          theirs=$(curl -sf https://api.github.com/repos/wanoo/foundry-mcp-gateway/releases/latest \
+                   | jq -r '.tag_name // empty' | sed 's/^v//' | cut -d. -f1,2)
+          if [ -n "$theirs" ] && [ "$mine" != "$theirs" ]; then
+            echo "::warning::Companion $mine vs gateway $theirs — les deux composants devraient partager le même major.minor."
+          fi
+
+  release:
+    needs: check
+    if: needs.check.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    permissions: { contents: write }
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sanity checks
+        run: |
+          # La version doit être identique dans module.json et main.mjs, sinon
+          # client_status rapporterait un numéro qui n'existe pas.
+          in_js=$(grep -oE 'const VERSION = "[^"]+"' scripts/main.mjs | cut -d'"' -f2)
+          [ "$in_js" = "$VERSION" ] || { echo "::error::main.mjs annonce $in_js, module.json $VERSION"; exit 1; }
+          for f in scripts/main.mjs scripts/addons/*.mjs; do node --check "$f"; done
+          # Parité des clés de traduction : une clé manquante = du texte brut à l'écran.
+          diff <(jq -r 'keys[]' lang/en.json | sort) <(jq -r 'keys[]' lang/fr.json | sort) \
+            || { echo "::error::lang/en.json et lang/fr.json n'ont pas les mêmes clés"; exit 1; }
+
+      - name: Point `download` at THIS version
+        run: |
+          jq --arg v "$VERSION" \
+            '.download = "https://github.com/wanoo/foundry-mcp-gateway-companion/releases/download/v\($v)/module.zip"' \
+            module.json > module.json.tmp && mv module.json.tmp module.json
+          jq -r '{version, manifest, download}' module.json
+
+      - name: Build the zip
+        run: |
+          # -x exclut les saletés macOS : le zip livré en contenait un .DS_Store.
+          zip -r module.zip module.json scripts lang assets README.md LICENSE \
+            -x "*.DS_Store" "__MACOSX/*"
+          unzip -l module.zip
+
+      - name: Tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v$VERSION" -m "v$VERSION"
+          git push origin "v$VERSION"
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: v${{ env.VERSION }}
+          generate_release_notes: true
+          files: |
+            module.json
+            module.zip
+
+      - name: Foundry registry reminder
+        run: |
+          echo "### Publier cette version sur foundryvtt.com" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Champ | Valeur |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| Version Number | \`$VERSION\` (sans \`v\`) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Package Manifest URL | \`https://github.com/wanoo/foundry-mcp-gateway-companion/releases/download/v$VERSION/module.json\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Release Notes URL | \`https://github.com/wanoo/foundry-mcp-gateway-companion/releases/tag/v$VERSION\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Minimum / Verified | 12 / 13 · Maximum : **laisser vide** |" >> $GITHUB_STEP_SUMMARY

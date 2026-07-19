@@ -12,10 +12,14 @@ const DialogV2 = () => foundry.applications?.api?.DialogV2;
 
 /** Exécuté par le client ciblé, qui renvoie lui-même sa réponse. */
 export const ASK_HANDLERS = {
-  async ask({ question, options, title = "Question du MJ", timeout_seconds = 120 }) {
+  async ask({ question, options, title, timeout_seconds = 120 }) {
+    // Titre localisé : ce dialogue s'affiche chez le joueur, pas chez le MJ.
+    title ??= game.i18n.localize("MCPCOMPANION.AskTitle");
     const D2 = DialogV2();
     if (!D2?.wait) throw new Error("DialogV2 unavailable (Foundry v12+ required)");
-    const choices = options?.length ? options : ["Oui", "Non"];
+    const choices = options?.length
+      ? options
+      : [game.i18n.localize("MCPCOMPANION.Yes"), game.i18n.localize("MCPCOMPANION.No")];
     const buttons = choices.map((label, i) => ({
       action: `c${i}`,
       label,
@@ -56,7 +60,10 @@ export const TABLE_HANDLERS = {
     const roll = new Roll(formula, data);
     await roll.evaluate();
     const speaker = actor ? ChatMessage.getSpeaker({ actor }) : ChatMessage.getSpeaker();
-    const message = { speaker, flavor: flavor ?? `Jet MCP : ${formula}` };
+    const message = {
+      speaker,
+      flavor: flavor ?? `${game.i18n.localize("MCPCOMPANION.MCPRoll")} : ${formula}`,
+    };
     if (whisper_gm) message.whisper = ChatMessage.getWhisperRecipients("GM").map((u) => u.id);
     await roll.toMessage(message);
     return {
