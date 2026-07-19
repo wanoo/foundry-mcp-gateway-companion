@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/banner.png" alt="Foundry MCP Companion" width="820">
+
 # 🧩 Foundry MCP Companion
 
 **The browser half of [foundry-mcp-gateway](https://github.com/wanoo/foundry-mcp-gateway).**
