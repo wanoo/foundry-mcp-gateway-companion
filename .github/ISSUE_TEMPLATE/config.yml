@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Gateway (server) issues
+    url: https://github.com/wanoo/foundry-mcp-gateway/issues
+    about: Anything about the MCP server, its tools or its deployment belongs there.
+  - name: Questions and setup help
+    url: https://github.com/wanoo/foundry-mcp-gateway/discussions
+    about: Discussions are shared between both repositories.
+  - name: Security vulnerability
+    url: https://github.com/wanoo/foundry-mcp-gateway-companion/security/advisories/new
+    about: Report privately — never in a public issue.

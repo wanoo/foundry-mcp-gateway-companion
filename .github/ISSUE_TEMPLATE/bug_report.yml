@@ -1,0 +1,74 @@
+name: Bug report
+description: A client_* tool misbehaves, or the module doesn't respond
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before anything else:** most "the companion doesn't answer" reports are
+        a sleeping browser tab. Browsers freeze background tabs, and a frozen tab
+        never replies. Bring the GM tab to the front and try again.
+        For a security issue, see [SECURITY.md](../blob/main/SECURITY.md) — report privately.
+
+  - type: input
+    id: version
+    attributes:
+      label: Companion version
+      description: Shown by the `client_status` tool, or in Manage Modules.
+      placeholder: "1.5.0"
+    validations:
+      required: true
+
+  - type: input
+    id: gateway
+    attributes:
+      label: Gateway version
+      description: "`foundry-mcp --version`. Both should carry the same number — `client_status` warns when they drift."
+      placeholder: "1.5.0"
+    validations:
+      required: true
+
+  - type: input
+    id: foundry
+    attributes:
+      label: Foundry VTT version
+      placeholder: "13.351"
+    validations:
+      required: true
+
+  - type: input
+    id: tool
+    attributes:
+      label: Which tool?
+      placeholder: "client_ask, client_capture…"
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Browser console
+      description: "F12 → Console. Lines prefixed [MCP Companion] are the useful ones."
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: A Gamemaster browser tab was open and awake
+        - label: The module is enabled in Manage Modules
+        - label: If the tool needs another module (Sequencer, FXMaster…), it is installed and active
+
+  - type: checkboxes
+    id: coc
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's [Code of Conduct](../blob/main/CODE_OF_CONDUCT.md)
+          required: true
