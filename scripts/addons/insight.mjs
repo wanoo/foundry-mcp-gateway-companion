@@ -67,15 +67,20 @@ export const INSIGHT_HANDLERS = {
   },
 
   // ------------------------------------------------------------------ enrich
-  async enrich({ uuid, html, secrets = true }) {
+  // `secrets` à false par défaut : la réponse est diffusée à TOUS les clients
+  // du monde (Foundry n'offre aucun ciblage sur un canal `module.*`), donc
+  // déplier les blocs <section class="secret"> réservés au MJ les publiait
+  // auprès des joueurs. Reste demandable explicitement quand l'appelant sait
+  // ce qu'il fait.
+  async enrich({ uuid, html, secrets = false }) {
     if (!uuid) {
       if (!html) throw new Error("nothing to enrich (give uuid or html)");
-      return { enriched: await textEditor().enrichHTML(html, { secrets, rollData: {}, async: true }) };
+      return { enriched: await textEditor().enrichHTML(html, { secrets, rollData: {} }) };
     }
     const doc = await fromUuid(uuid);
     if (!doc) throw new Error(`Document not found: ${uuid}`);
     const rollData = doc.getRollData?.() ?? {};
-    const enrich = (src) => textEditor().enrichHTML(src, { secrets, rollData, async: true });
+    const enrich = (src) => textEditor().enrichHTML(src, { secrets, rollData });
 
     // Un JournalEntry ne porte pas de texte : ce sont ses PAGES qui en ont.
     if (doc.pages?.size) {

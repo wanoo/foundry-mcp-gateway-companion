@@ -1,0 +1,27 @@
+{
+  "_comment": [
+    "Vecteur d'interopérabilité produit par la passerelle Rust (p256) et vérifié",
+    "ici par WebCrypto. C'est le seul test qui prouve que les DEUX implémentations",
+    "s'accordent sur le format de fil : elles sont versionnées séparément, et si",
+    "elles divergent, plus aucune commande ne passe en production.",
+    "",
+    "Régénérer après tout changement du format signé :",
+    "  cd ../foundry-mcp-gateway",
+    "  cargo test imprime_vecteur -- --nocapture --ignored",
+    "",
+    "La clé privée correspondante est un fixe de test, jamais utilisée ailleurs :",
+    "  4c0883a69102937d6231471b5dbb6204fe512961708279e0f2c5b1b1c1a1d1e1"
+  ],
+  "publicKeyHex": "04b924c0eb5a1325b3f9b0d0590887aa3d5f9e7d5dc405b7ba5f454817fd4e13b69963ed84b1a7210d72bdc342f98b05133669a9bee82436043bf8cab6075155c7",
+  "message": {
+    "mcp": true,
+    "cmd": "run_macro",
+    "id": "id-1",
+    "world": "star-wars",
+    "exp": 1120000,
+    "argsRaw": "{\"macro\":\"Open Calendar\"}",
+    "args": { "macro": "Open Calendar" },
+    "sig": "86b8f2718f4c89f5a605e74f932691a48a9c61617a17e62922f94a426f15969c8b97030f61654be40fd03a06e782770cd88c24ce8e6f428ee33627c4bf187ba5"
+  },
+  "signedAtMs": 1000000
+}
