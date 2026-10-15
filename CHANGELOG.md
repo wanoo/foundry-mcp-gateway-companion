@@ -7,7 +7,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 on major.minor** — the two halves speak one socket protocol and are released
 together. A patch number may differ between them; a minor should not.
 
-## [1.6.0] — unreleased
+## [1.6.0] — 2026-10-15
 
 *The release that closes the door the module left open.*
 

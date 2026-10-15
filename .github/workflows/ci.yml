@@ -43,7 +43,7 @@ jobs:
   parity:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # Non-blocking on purpose: the reference lives in the other repo and may
       # legitimately be a step ahead while a pair of PRs lands. Same pattern as
       # the release workflow's version-drift warning. Flip to blocking once
