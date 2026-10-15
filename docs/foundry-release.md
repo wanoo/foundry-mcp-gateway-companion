@@ -26,7 +26,7 @@ from there. Otherwise:
 | **Package Manifest URL** | `https://github.com/wanoo/foundry-mcp-gateway-companion/releases/download/v<VERSION>/module.json` |
 | **Release Notes URL** | `https://github.com/wanoo/foundry-mcp-gateway-companion/releases/tag/v<VERSION>` |
 | **Minimum Core Version** | `12` |
-| **Verified Core Version** | `13` |
+| **Verified Core Version** | `14` |
 | **Maximum Core Version** | **leave blank** |
 
 Then: *Authored Packages* → **Edit** → **+ Add** a release → paste → save.

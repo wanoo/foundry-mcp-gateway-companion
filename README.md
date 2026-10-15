@@ -9,7 +9,7 @@
 The MCP server talks to Foundry through the socket protocol, which only reaches
 *documents*. This tiny module runs in the **GM's browser** — where the full
 `game.*` API lives — and executes what the server delegates. Install it and your
-AI gains **36 `client_*` tools**: it can *see* the table, *talk* to players, and
+AI gains **46 `client_*` tools**: it can *see* the table, *talk* to players, and
 *stage* effects.
 
 [![Foundry](https://img.shields.io/badge/Foundry%20VTT-v12%2B-ff6400)](https://foundryvtt.com)
@@ -76,8 +76,10 @@ configuration needed.
 | `run_script` | `client_run_script` | Arbitrary JS — **off by default**; a GM picks *ask me first* (shows the code, waits for approval) or *automatic*. Always logged to the console |
 | `roll_formula` | 🎲 `client_roll_formula` | **Any system**: any formula through Foundry's real `Roll` engine — native chat card, Dice So Nice, actor roll data, per-die results |
 | `roll_pool_native` | 🎲 `client_roll_pool_native` | *starwarsffg*: real FFG engine + **Dice So Nice** 3D dice |
-| `cc_convert` / `cc_export_obsidian` / `cc_open_toc` | `client_cc_*` | [Campaign Codex](https://foundryvtt.com/packages/campaign-codex) client API |
-| `al_open` · `mc_set_time` / `mc_open` | `client_al_open` `client_mc_*` | Asset Librarian · Mini Calendar |
+| `cc_convert` / `cc_export_obsidian` / `cc_open_toc` / `cc_open_quest_board` / `cc_open_sheet` / `cc_migrate_content` / `cc_shop_add_item` | `client_cc_*` | [Campaign Codex](https://foundryvtt.com/packages/campaign-codex) 6.9 client API — the Hub and quest board open without toggling shut |
+| `al_open` / `al_search` | `client_al_open` `client_al_search` | Asset Librarian — open pre-filtered, search assets by tags |
+| `mc_set_time` / `mc_set_date` / `mc_get_date` / `mc_set_weather` / `mc_open` | `client_mc_*` | Mini Calendar — live date, dawn/noon/dusk/midnight, jump to a date, force the weather |
+| `mp_play_preset` / `mp_play_tags` | `client_mp_*` | Mini Player — start a saved ambience or music by tags |
 
 Every integration degrades gracefully — if the target module isn't active, the
 tool answers with a clear error instead of breaking anything.

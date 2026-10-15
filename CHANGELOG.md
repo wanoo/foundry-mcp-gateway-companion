@@ -7,7 +7,27 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 on major.minor** — the two halves speak one socket protocol and are released
 together. A patch number may differ between them; a minor should not.
 
-## [Unreleased]
+## [1.7.0] — 2026-10-16
+
+*Catching up with the wgtnGM suite and with Foundry v14. Pairs with
+foundry-mcp-gateway 1.7.0; tested on a live Foundry 14.369 world.*
+
+### Added
+
+- **Campaign Codex 6.9**: open the quest board (`cc_open_quest_board`) or a
+  sheet (`cc_open_sheet`), repair sheets made by older gateways
+  (`cc_migrate_content`, Campaign Codex's own migration), and add items to a
+  shop through Campaign Codex so the price snapshot is right
+  (`cc_shop_add_item`).
+- **Mini Calendar 10**: the live, localized date with season, dawn/dusk and
+  moon phases (`mc_get_date`), jumping to any date (`mc_set_date`), and forcing
+  a day's weather (`mc_set_weather`).
+- **Asset Librarian 1.4**: search assets by tags across the world and compendia
+  (`al_search`).
+- **Mini Player**: start a saved ambience (`mp_play_preset`) or open the player
+  on tags with autoplay (`mp_play_tags`).
+- The wgtnGM handlers live in one file per addon (`scripts/addons/`), mirroring
+  the gateway.
 
 ### Changed
 
@@ -15,6 +35,16 @@ together. A patch number may differ between them; a minor should not.
 
 ### Fixed
 
+- **The Campaign Codex Hub closed instead of opening** when it was already open
+  — the API toggles. `cc_open_toc` now opens it, or brings it forward with the
+  requested view and tags. The table of contents became the Hub in 6.6.
+- `cc_convert` reported success when Campaign Codex refused the conversion
+  (quests and factions cannot be converted). It returns the created sheets or
+  an error.
+- `mc_set_time` only knew dawn and dusk of *today*, so "dawn" could move time
+  backwards; it now takes day offsets, explicit hours, noon/midnight and
+  `next`. `mc_open` closed an open calendar; it now only opens.
+- `al_open` dropped tag filters, search and folder.
 - **Targeting on Foundry v14.** `game.user.updateTokenTargets` is gone in v14;
   `client_target` now goes through `canvas.tokens.setTargets`, and keeps the
   old call for v12 and v13.
