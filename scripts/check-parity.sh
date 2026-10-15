@@ -40,7 +40,10 @@ scene=$(keys SCENE_HANDLERS scripts/main.mjs)
 addressed=$(keys ASK_HANDLERS scripts/addons/table.mjs)
 unique=$( { keys UNIQUE_HANDLERS scripts/main.mjs
             keys TABLE_HANDLERS  scripts/addons/table.mjs
-            keys CC_FAMILY_HANDLERS scripts/addons/cc-family.mjs
+            keys CAMPAIGN_CODEX_HANDLERS  scripts/addons/campaign-codex.mjs
+            keys ASSET_LIBRARIAN_HANDLERS scripts/addons/asset-librarian.mjs
+            keys MINI_CALENDAR_HANDLERS   scripts/addons/mini-calendar.mjs
+            keys MINI_SUITE_HANDLERS      scripts/addons/mini-suite.mjs
             keys AMBIENCE_HANDLERS  scripts/addons/ambience.mjs
             keys INSIGHT_HANDLERS   scripts/addons/insight.mjs
             keys SCENE_FX_HANDLERS  scripts/addons/scene-fx.mjs; } | sort -u )

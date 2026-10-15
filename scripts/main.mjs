@@ -15,7 +15,10 @@
  * buffer d'événements (outils client_* / get_events).
  */
 
-import { CC_FAMILY_HANDLERS } from "./addons/cc-family.mjs";
+import { CAMPAIGN_CODEX_HANDLERS } from "./addons/campaign-codex.mjs";
+import { ASSET_LIBRARIAN_HANDLERS } from "./addons/asset-librarian.mjs";
+import { MINI_CALENDAR_HANDLERS } from "./addons/mini-calendar.mjs";
+import { MINI_SUITE_HANDLERS } from "./addons/mini-suite.mjs";
 import { SCENE_FX_HANDLERS } from "./addons/scene-fx.mjs";
 import { INSIGHT_HANDLERS } from "./addons/insight.mjs";
 import { ASK_HANDLERS, TABLE_HANDLERS } from "./addons/table.mjs";
@@ -442,7 +445,10 @@ const UNIQUE_HANDLERS = {
 // Fusionne les handlers des fichiers d'addons dédiés (famille CC + FX de scène).
 Object.assign(
   UNIQUE_HANDLERS,
-  CC_FAMILY_HANDLERS,
+  CAMPAIGN_CODEX_HANDLERS,
+  ASSET_LIBRARIAN_HANDLERS,
+  MINI_CALENDAR_HANDLERS,
+  MINI_SUITE_HANDLERS,
   SCENE_FX_HANDLERS,
   INSIGHT_HANDLERS,
   TABLE_HANDLERS,
