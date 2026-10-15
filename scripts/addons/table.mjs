@@ -114,6 +114,12 @@ export const TABLE_HANDLERS = {
   },
 
   async target({ tokens = [], release_others = true }) {
+    // v14 : le ciblage passe par la couche de jetons ; updateTokenTargets n'existe plus.
+    if (typeof canvas.tokens?.setTargets === "function") {
+      const found = tokens.filter((id) => canvas.tokens.get(id));
+      canvas.tokens.setTargets(found, { mode: release_others ? "replace" : "acquire" });
+      return { targeted: found, missing: tokens.filter((id) => !found.includes(id)) };
+    }
     if (release_others) game.user.updateTokenTargets([]);
     const found = [];
     for (const id of tokens) {

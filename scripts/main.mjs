@@ -169,16 +169,18 @@ async function onMessage(msg) {
   // `Object.hasOwn` et pas `TABLE[cmd]` : `cmd` vient du réseau, et
   // `toString`/`constructor` matcheraient via la chaîne de prototypes.
   if (Object.hasOwn(SCENE_HANDLERS, cmd)) {
+    // Le responder accuse réception une seule fois (le MCP sait que ça a été relayé),
+    // AVANT d'exécuter : un handler peut ne jamais rendre la main — un son attend
+    // que le navigateur débloque l'audio, ce qui n'arrive qu'au premier clic.
+    if (id && isResponder() && !alreadyHandled(id)) {
+      reply(id, true, { dispatched: cmd });
+    }
     if (shouldRunHere(targets)) {
       try {
         await SCENE_HANDLERS[cmd](args);
       } catch (e) {
         console.error(`[MCP Companion] ${cmd}:`, e);
       }
-    }
-    // Le responder accuse réception une seule fois (le MCP sait que ça a été relayé).
-    if (id && isResponder() && !alreadyHandled(id)) {
-      reply(id, true, { dispatched: cmd });
     }
     return;
   }

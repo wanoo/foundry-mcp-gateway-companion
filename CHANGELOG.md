@@ -7,6 +7,26 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 on major.minor** — the two halves speak one socket protocol and are released
 together. A patch number may differ between them; a minor should not.
 
+## [Unreleased]
+
+### Changed
+
+- **Verified on Foundry v14** (build 369) — `compatibility.verified` is now 14.
+
+### Fixed
+
+- **Targeting on Foundry v14.** `game.user.updateTokenTargets` is gone in v14;
+  `client_target` now goes through `canvas.tokens.setTargets`, and keeps the
+  old call for v12 and v13.
+- **Mini Calendar 10.x.** Its macros were renamed (`setTime - API`,
+  `openCalendar  - API`), so `client_mc_set_time` (dawn/dusk) and
+  `client_mc_open` could not find them. The module's own API is used first; the
+  macros stay as a fallback.
+- **`client_play_sound` answers again.** Scene commands acknowledged only after
+  running, and a sound waits until the browser unlocks audio — which happens on
+  the first click. A Gamemaster who had not clicked yet made the gateway wait
+  out its timeout. Scene commands now acknowledge first, then run.
+
 ## [1.6.0] — 2026-10-15
 
 *The release that closes the door the module left open.*
