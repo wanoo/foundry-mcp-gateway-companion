@@ -10,6 +10,25 @@
 
 const DialogV2 = () => foundry.applications?.api?.DialogV2;
 
+/** Échappement HTML, sans repli silencieux.
+ *
+ * `question`/`title` viennent du payload socket, donc d'un appelant qu'on ne
+ * peut pas authentifier (Foundry relaie les canaux `module.*` à tous les
+ * clients). Interpolés bruts dans le `content` d'un DialogV2, ils exécutent
+ * du JS chez le joueur ciblé — `<img src=x onerror=…>` part au rendu, avant
+ * même l'affichage des boutons. C'était le contournement complet du garde-fou
+ * de `run_script` : pas de réglage à activer, pas de confirmation.
+ *
+ * Pas de repli `?? (t) => t` : un échappeur absent doit casser bruyamment,
+ * jamais laisser passer le HTML en silence. */
+function esc(text) {
+  const f = foundry.utils?.escapeHTML;
+  if (typeof f !== "function") {
+    throw new Error("foundry.utils.escapeHTML unavailable — refusing to render untrusted text");
+  }
+  return f(String(text ?? ""));
+}
+
 /** Exécuté par le client ciblé, qui renvoie lui-même sa réponse. */
 export const ASK_HANDLERS = {
   async ask({ question, options, title, timeout_seconds = 120 }) {
@@ -20,9 +39,11 @@ export const ASK_HANDLERS = {
     const choices = options?.length
       ? options
       : [game.i18n.localize("MCPCOMPANION.Yes"), game.i18n.localize("MCPCOMPANION.No")];
+    // `label` est rendu comme HTML par DialogV2 : les options viennent du même
+    // payload non authentifié que la question, donc même traitement.
     const buttons = choices.map((label, i) => ({
       action: `c${i}`,
-      label,
+      label: esc(label),
       callback: () => label,
     }));
 
@@ -33,8 +54,8 @@ export const ASK_HANDLERS = {
       timer = setTimeout(() => resolve({ __timeout: true }), timeout_seconds * 1000);
     });
     const answered = D2.wait({
-      window: { title },
-      content: `<p>${question}</p>`,
+      window: { title: esc(title) },
+      content: `<p>${esc(question)}</p>`,
       buttons,
       rejectClose: false,
     });

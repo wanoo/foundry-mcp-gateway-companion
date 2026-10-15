@@ -1,0 +1,47 @@
+name: Feature request
+description: Propose a client_* handler, or an addon integration that needs the browser
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This repository is the **browser half**. If your idea only needs
+        *documents* (flags, settings, journal content), it belongs in the
+        [gateway](https://github.com/wanoo/foundry-mcp-gateway/issues) — no
+        companion code required.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind?
+      options:
+        - A new client_* handler
+        - An addon integration (a Foundry module's client API)
+        - Telemetry — an event to stream back
+        - Settings / UX
+        - Documentation
+        - Other
+    validations: { required: true }
+  - type: textarea
+    id: problem
+    attributes:
+      label: What can't the AI do at your table today?
+      description: Describe the situation rather than the solution — an existing tool may already cover it.
+    validations: { required: true }
+  - type: input
+    id: module
+    attributes:
+      label: Which Foundry module's API would it need?
+      placeholder: "sequencer, fxmaster, monks-active-tiles…"
+  - type: dropdown
+    id: delivery
+    attributes:
+      label: Which delivery mode?
+      description: "scene = every targeted client runs it; addressed = the targeted client runs it AND answers; unique = the elected GM responder runs it. See CONTRIBUTING.md."
+      options: ["scene", "addressed", "unique", "not sure"]
+  - type: checkboxes
+    id: coc
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

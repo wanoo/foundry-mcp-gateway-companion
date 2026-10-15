@@ -26,10 +26,10 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           if git rev-parse "v$version" >/dev/null 2>&1; then
             echo "publish=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::v$version est déjà taguée — rien à publier."
+            echo "::notice::v$version is already tagged — nothing to publish."
           else
             echo "publish=true" >> "$GITHUB_OUTPUT"
-            echo "::notice::Nouvelle version détectée : $version"
+            echo "::notice::New version detected: $version"
           fi
 
       # Les deux moitiés partagent un numéro de version : on prévient (sans
@@ -41,7 +41,7 @@ jobs:
           theirs=$(curl -sf https://api.github.com/repos/wanoo/foundry-mcp-gateway/releases/latest \
                    | jq -r '.tag_name // empty' | sed 's/^v//' | cut -d. -f1,2)
           if [ -n "$theirs" ] && [ "$mine" != "$theirs" ]; then
-            echo "::warning::Companion $mine vs gateway $theirs — les deux composants devraient partager le même major.minor."
+            echo "::warning::Companion $mine vs gateway $theirs — both halves should share one major.minor."
           fi
 
   release:
@@ -59,11 +59,11 @@ jobs:
           # La version doit être identique dans module.json et main.mjs, sinon
           # client_status rapporterait un numéro qui n'existe pas.
           in_js=$(grep -oE 'const VERSION = "[^"]+"' scripts/main.mjs | cut -d'"' -f2)
-          [ "$in_js" = "$VERSION" ] || { echo "::error::main.mjs annonce $in_js, module.json $VERSION"; exit 1; }
+          [ "$in_js" = "$VERSION" ] || { echo "::error::main.mjs says $in_js, module.json says $VERSION"; exit 1; }
           for f in scripts/main.mjs scripts/addons/*.mjs; do node --check "$f"; done
           # Parité des clés de traduction : une clé manquante = du texte brut à l'écran.
           diff <(jq -r 'keys[]' lang/en.json | sort) <(jq -r 'keys[]' lang/fr.json | sort) \
-            || { echo "::error::lang/en.json et lang/fr.json n'ont pas les mêmes clés"; exit 1; }
+            || { echo "::error::lang/en.json and lang/fr.json do not have the same keys"; exit 1; }
 
       - name: Point `download` at THIS version
         run: |

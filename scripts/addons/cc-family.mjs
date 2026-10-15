@@ -64,8 +64,10 @@ export const CC_FAMILY_HANDLERS = {
 
   async mc_open() {
     // Ouvre le calendrier via sa macro (« Open Calendar »), best-effort.
-    const m = game.macros?.getName?.("Open Calendar")
-      ?? game.macros?.contents?.find((x) => /calendar/i.test(x.name));
+    // Nom exact uniquement : la recherche floue /calendar/i qui servait de
+    // repli exécutait la première macro dont le nom contenait « calendar »,
+    // donc n'importe quelle macro qu'un joueur pouvait créer et nommer.
+    const m = game.macros?.getName?.("Open Calendar");
     if (!m) throw new Error("Mini Calendar 'Open Calendar' macro not found");
     await m.execute();
     return { opened: true };

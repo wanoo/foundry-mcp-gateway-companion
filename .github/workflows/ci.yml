@@ -13,23 +13,41 @@ jobs:
       - uses: actions/setup-node@v7
         with: { node-version: "22" }
       - name: Syntax
-        run: for f in scripts/main.mjs scripts/addons/*.mjs; do node --check "$f"; done
+        run: for f in scripts/*.mjs scripts/addons/*.mjs; do node --check "$f"; done
       - name: module.json is valid and coherent
         run: |
           jq empty module.json
           in_js=$(grep -oE 'const VERSION = "[^"]+"' scripts/main.mjs | cut -d'"' -f2)
           in_json=$(jq -r .version module.json)
-          [ "$in_js" = "$in_json" ] || { echo "::error::main.mjs=$in_js vs module.json=$in_json"; exit 1; }
+          [ "$in_js" = "$in_json" ] || { echo "::error::version mismatch: main.mjs=$in_js vs module.json=$in_json"; exit 1; }
       - name: Translation keys are in sync
         run: |
-          # Une clé présente d'un côté seulement affiche la clé brute à l'écran.
+          # A key present on one side only renders as the raw key on screen.
           diff <(jq -r 'keys[]' lang/en.json | sort) <(jq -r 'keys[]' lang/fr.json | sort)
+      - name: Unit tests
+        # Le vérificateur de signature est pur : il se teste sans Foundry,
+        # sans licence et sans navigateur — c'est ce qui rend la contribution
+        # externe possible sur la partie la plus sensible du module.
+        run: node --test test/*.test.mjs
+
       - name: Every localize() key exists
         run: |
           missing=0
-          for key in $(grep -ohE 'localize\("[^"]+"\)' scripts/main.mjs scripts/addons/*.mjs \
-                       | sed -E 's/localize\("([^"]+)"\)/\1/' | sort -u); do
+          for key in $(grep -ohE '(localize|format)\("[^"]+"' scripts/*.mjs scripts/addons/*.mjs \
+                       | sed -E 's/(localize|format)\("([^"]+)"/\2/' | sort -u); do
             jq -e --arg k "$key" 'has($k)' lang/en.json >/dev/null \
-              || { echo "::error::clé absente de lang/en.json : $key"; missing=1; }
+              || { echo "::error::key missing from lang/en.json: $key"; missing=1; }
           done
           exit $missing
+
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # Non-blocking on purpose: the reference lives in the other repo and may
+      # legitimately be a step ahead while a pair of PRs lands. Same pattern as
+      # the release workflow's version-drift warning. Flip to blocking once
+      # 1.6.0 has shipped on both sides.
+      - name: Handlers match the gateway's client_* commands
+        continue-on-error: true
+        run: ./scripts/check-parity.sh
