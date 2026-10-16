@@ -20,6 +20,8 @@ import { ASSET_LIBRARIAN_HANDLERS } from "./addons/asset-librarian.mjs";
 import { MINI_CALENDAR_HANDLERS } from "./addons/mini-calendar.mjs";
 import { MINI_SUITE_HANDLERS } from "./addons/mini-suite.mjs";
 import { SCENE_FX_HANDLERS } from "./addons/scene-fx.mjs";
+import { ITEM_PILES_HANDLERS } from "./addons/item-piles.mjs";
+import { MASS_EDIT_HANDLERS } from "./addons/mass-edit.mjs";
 import { INSIGHT_HANDLERS } from "./addons/insight.mjs";
 import { ASK_HANDLERS, TABLE_HANDLERS } from "./addons/table.mjs";
 import { AMBIENCE_HANDLERS } from "./addons/ambience.mjs";
@@ -283,6 +285,8 @@ const UNIQUE_HANDLERS = {
           ["monks-active-tiles", "monksActiveTiles"],
           ["asset-librarian", "assetLibrarian"],
           ["wgtgm-mini-calendar", "miniCalendar"],
+          ["item-piles", "itemPiles"],
+          ["multi-token-edit", "massEdit"],
         ].map(([id, key]) => [key, game.modules.get(id)?.active ?? false]),
       ),
     };
@@ -391,6 +395,8 @@ Object.assign(
   MINI_CALENDAR_HANDLERS,
   MINI_SUITE_HANDLERS,
   SCENE_FX_HANDLERS,
+  ITEM_PILES_HANDLERS,
+  MASS_EDIT_HANDLERS,
   INSIGHT_HANDLERS,
   TABLE_HANDLERS,
   AMBIENCE_HANDLERS,
