@@ -1,134 +1,137 @@
 <div align="center">
 
-<img src="assets/banner.png" alt="Foundry MCP Companion" width="820">
+<img src="https://raw.githubusercontent.com/wanoo/foundry-mcp-gateway-companion/main/assets/banner.png" alt="Foundry MCP Companion" width="820">
 
-# 🧩 Foundry MCP Companion
+# MCP Gateway Companion for Foundry VTT
 
-**The browser half of [foundry-mcp-gateway](https://github.com/wanoo/foundry-mcp-gateway).**
+**Bring your AI assistant into the live Foundry experience.**
 
-The MCP server talks to Foundry through the socket protocol, which only reaches
-*documents*. This tiny module runs in the **GM's browser** — where the full
-`game.*` API lives — and executes what the server delegates. Install it and your
-AI gains **36 `client_*` tools**: it can *see* the table, *talk* to players, and
-*stage* effects.
+The browser component of **[MCP Gateway](https://github.com/wanoo/foundry-mcp-gateway)**:
+read the values on your sheets, inspect a scene, roll native dice and interact with players.
+Install Gateway and Companion together for the full application.
 
-[![Foundry](https://img.shields.io/badge/Foundry%20VTT-v12%2B-ff6400)](https://foundryvtt.com)
+[![Foundry](https://img.shields.io/badge/Foundry-minimum%2012%20%7C%20verified%2014-ff6400)](https://foundryvtt.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+[Français](README.fr.md) · [Full setup guide](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/installation.md) · [Discussions](https://github.com/wanoo/foundry-mcp-gateway/discussions)
 
 </div>
 
----
+## Prepare with what Foundry actually shows
 
-**You don't need it** to use foundry-mcp-gateway — without it the `client_*`
-tools time out with a clear message and everything else keeps working. But it
-unlocks what a socket client fundamentally cannot do.
+The Gateway works with your world's documents. The Companion adds the APIs
+running inside Foundry's browser: prepared character values, the visible canvas,
+native roll engines and addon interfaces. For example:
 
-## 📦 Installation
+> “Read the selected NPC's final stats, including active effects, and summarize what I need for the encounter.”
 
-*Add-on Modules → Install Module → Manifest URL*:
+> “Inspect this scene and describe the tokens, doors and lights before I stage the next encounter.”
 
+> “Ask the players which lead they want to follow, then summarize their answers for my preparation notes.”
+
+During play, it can also open a handout, pan a camera, roll dice or cue an ambience.
+The 1.7 Companion handles **46 companion tools**, all included in the Gateway's
+catalogue. Your AI connects to the Gateway; the Companion exposes no separate
+MCP endpoint.
+
+| Use | Examples | Optional dependencies |
+|---|---|---|
+| Understand the world | Prepared sheet values, scene reports, screenshots, translated compendia | Babele for translations |
+| Interact with players | Questions and answers, notifications, documents, targets and camera | None for the basic actions |
+| Roll in Foundry | Native formula rolls; native Star Wars FFG pools | The matching system; Dice So Nice for 3D dice |
+| Prepare campaign content | Campaign sheets, quest board, calendar dates, tagged assets | Campaign Codex, Mini Calendar, Asset Librarian |
+| Stage the scene | Weather, effects, token filters, music and active tiles | FXMaster, Sequencer, Token Magic FX, Mini Player or Monk's Active Tiles, depending on the action |
+
+See the [complete catalogue and dependencies](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/capabilities.md).
+An unavailable integration reports which module is missing.
+
+## One application, two components
+
+```mermaid
+flowchart LR
+    AI["AI client"] <-->|"MCP · Biscuit token"| G["Gateway"]
+    G <-->|"Foundry login + socket"| F["Foundry VTT"]
+    F <-->|"Signed commands + results"| C["Companion · GM browser"]
 ```
-https://github.com/wanoo/foundry-mcp-gateway-companion/releases/latest/download/module.json
-```
 
-Enable it in your world. A **GM browser must be connected** (and its tab awake —
-browsers freeze background tabs) for the `client_*` tools to respond. No other
-configuration needed.
+The **Gateway** runs as a Docker container or native binary. This **Companion**
+runs as a Foundry module in the GM's browser. A GM must be connected with an
+awake tab for Companion tools to answer; a headless bot connection is not a
+browser responder. Player-facing actions also need the intended players connected
+with the module loaded. The Gateway can still work on documents without the
+Companion or a connected GM browser.
 
-## ✨ What it unlocks
+The Companion declares **Foundry v12 minimum** and **v14 verified**. The paired
+1.7 application was tested on **Foundry 14.369**; this does not certify every
+older build. The Gateway targets v13 and v14.
 
-### 👁️ Perception — the AI sees your table
+## Install and establish trust
 
-| Handler | MCP tool | What |
+New to the application? Follow the **[complete installation guide](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/installation.md)**
+to configure the Gateway, generate keys and connect your AI first.
+
+1. In **Add-on Modules → Install Module → Manifest URL**, paste:
+
+   ```text
+   https://github.com/wanoo/foundry-mcp-gateway-companion/releases/latest/download/module.json
+   ```
+
+2. Enable **Foundry MCP Companion** in your world and keep a GM browser open.
+3. Configure a stable `COMPANION_SIGNING_KEY` on the Gateway, generated with `foundry-mcp --generate-key`.
+4. Ask your AI to call `companion_trust_key` for this world.
+5. **Reload all GM browsers**, then call `client_status` to check the responder and versions.
+
+The manual alternative is to paste the Gateway's `foundry-mcp --print-public-key`
+output into **Configure Settings → Foundry MCP Companion → Gateway public key**,
+then reload GM browsers. The trust tool refuses to overwrite a different existing
+key; inspect the mismatch before replacing it. Use Foundry over HTTPS or browser
+localhost so Web Crypto can verify signatures.
+
+Keep Gateway and Companion on the same **major.minor**, such as 1.7.x. Patch
+numbers may differ. At the publication check on 16 October 2026, both
+[Gateway](https://github.com/wanoo/foundry-mcp-gateway/releases/latest) and
+[Companion](https://github.com/wanoo/foundry-mcp-gateway-companion/releases/latest)
+were published as 1.6.0; this source tree documents the upcoming 1.7.
+The manifest URL installs the latest published Companion.
+
+## Access and settings
+
+**Biscuit tokens protect AI client → Gateway access.** The Gateway creates them;
+they support expiry, read-only access and individual revocation. Keep the full
+MCP connection URL private. Biscuit tokens are not the Companion's signing keys.
+
+**ECDSA P-256 signatures authenticate Gateway → Companion commands.** Set the
+Gateway's stable signing key and install its public half in the world.
+
+| Setting | Default | Purpose |
 |---|---|---|
-| `capture` | 📸 `client_capture` | Screenshot of the GM's view, returned as a real image |
-| `scene_report` | 🗺️ `client_scene_report` | Tokens with grid coords, disposition, **real** visibility, doors, lights |
-| `get_derived` | 📊 `client_get_derived` | **Prepared** sheet values (post-`prepareData` + active effects) |
-| `enrich` | 🔗 `client_enrich` | Enriched HTML: `@UUID` resolved, inline rolls, GM secrets |
-| `search` | 🔎 `client_search` | Name search across every collection |
-| `babele` | 🌍 `client_babele` | [Babele](https://foundryvtt.com/packages/babele) translated view, reverse search by displayed name |
+| Command signature checking | Guarded | Without a key, refuses code-executing commands; with a key, requires valid signatures for every command |
+| Gateway public key | Empty | Trust anchor installed during setup; changes take effect after browser reload |
+| Remote script execution | Disabled | Controls arbitrary JavaScript from `client_run_script`; optional ask-first or automatic modes |
+| Remote script-macro execution | Ask me first | Separate policy for remotely invoked script macros; manually launched macros are unaffected |
+| Relay client telemetry | On, per client | Reports selections, targets and scene state; each client can turn it off |
 
-### 🗣️ Interaction
+Strict signature mode refuses unauthenticated commands even when no key is set;
+off mode disables checking. Script approval is a separate choice from signature
+checking. Signatures do not encrypt replies on Foundry's shared module socket
+channel. GM secrets in `client_enrich` are excluded by default; explicitly
+requesting them sends them over that shared channel.
+See the [trust and configuration guide](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/advanced.md#access-and-companion-trust).
 
-| Handler | MCP tool | What |
-|---|---|---|
-| `ask` | ❓ `client_ask` | A real dialog on a player's screen — their answer comes back |
-| `notify` / `ping_at` / `pan` | 📣 `client_notify` 🔔 `client_ping` 🎥 `client_pan_camera` | Notifications, map pings, camera moves — targetable per client |
-| `show_document` | 📜 `client_show_document` | Open a sheet on targeted clients |
-| `select` / `target` / `fog` | 🎯 `client_select` `client_target` 🌫️ `client_fog` | Real selection, crosshair targets, fog reset |
-| `get_client_state` / `ping_module` | 📡 `client_get_state` `client_status` | Who's online & watching what · health + detected deps |
+## 1.6 to 1.7
 
-### 🌦️ Stagecraft
+**1.6 introduced command authentication** and separate script-macro approval.
+**1.7 improves campaign preparation** with Campaign Codex 6.9, Mini Calendar 10,
+Asset Librarian search and Mini Player, alongside Foundry 14 targeting and sound
+fixes. Retain existing keys when updating from 1.6, reload browsers and reconnect
+your MCP client. For older versions, follow the separate
+[1.5 migration instructions](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/advanced.md#upgrading).
 
-| Handler | MCP tool | Needs |
-|---|---|---|
-| `weather` / `weather_types` | 🌧️ `client_weather` | [FXMaster](https://foundryvtt.com/packages/fxmaster) |
-| `play_effect` / `seq_between` / `seq_sound` / `effect_catalog` | ✨ `client_play_effect` `client_seq_between` `client_seq_sound` 🗂️ `client_effect_catalog` | [Sequencer](https://foundryvtt.com/packages/sequencer) |
-| `token_fx` / `token_fx_presets` | 🎇 `client_token_fx` | [Token Magic FX](https://foundryvtt.com/packages/tokenmagic) |
-| `mat_trigger` | 🎞️ `client_mat_trigger` | [Monk's Active Tiles](https://foundryvtt.com/packages/monks-active-tiles) |
-| `play_sound` | 🔊 `client_play_sound` | — |
+## Help and contribute
 
-### 🚀 Power tools
+- [Troubleshooting](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/advanced.md#troubleshooting) — timeouts, signatures and missing modules.
+- [Discussions](https://github.com/wanoo/foundry-mcp-gateway/discussions) — shared setup help and campaign workflows.
+- [Report a Companion bug](https://github.com/wanoo/foundry-mcp-gateway-companion/issues) · [Report a Gateway bug](https://github.com/wanoo/foundry-mcp-gateway/issues).
+- [Contribute](https://github.com/wanoo/foundry-mcp-gateway-companion/blob/main/CONTRIBUTING.md) · [Changelog](https://github.com/wanoo/foundry-mcp-gateway-companion/blob/main/CHANGELOG.md) · [Security policy](https://github.com/wanoo/foundry-mcp-gateway-companion/blob/main/SECURITY.md).
 
-| Handler | MCP tool | What |
-|---|---|---|
-| `run_macro` | `client_run_macro` | Any macro, by id or name — the universal key |
-| `run_script` | `client_run_script` | Arbitrary JS — **off by default**; a GM picks *ask me first* (shows the code, waits for approval) or *automatic*. Always logged to the console |
-| `roll_formula` | 🎲 `client_roll_formula` | **Any system**: any formula through Foundry's real `Roll` engine — native chat card, Dice So Nice, actor roll data, per-die results |
-| `roll_pool_native` | 🎲 `client_roll_pool_native` | *starwarsffg*: real FFG engine + **Dice So Nice** 3D dice |
-| `cc_convert` / `cc_export_obsidian` / `cc_open_toc` | `client_cc_*` | [Campaign Codex](https://foundryvtt.com/packages/campaign-codex) client API |
-| `al_open` · `mc_set_time` / `mc_open` | `client_al_open` `client_mc_*` | Asset Librarian · Mini Calendar |
-
-Every integration degrades gracefully — if the target module isn't active, the
-tool answers with a clear error instead of breaking anything.
-
-## ⚙️ How it works
-
-The module listens on the socket channel `module.foundry-mcp-gateway-companion`.
-Commands `{cmd, id, targets?, args}` arrive from the MCP server; results go back
-as `{reply: id, ok, result|error}`, which the server catches in its event buffer.
-
-Three delivery modes:
-
-- **scene** — every targeted client executes (camera, pings, sounds, notifications);
-- **addressed** — the *targeted* client executes **and answers** (`ask`);
-- **unique** — a single GM **responder** executes (API calls, rolls, captures).
-  The responder is elected among the clients that actually loaded this module —
-  headless GM connections (like the MCP bot itself) are never elected.
-
-Telemetry (optional, per client): token selections, targets, viewed scene and
-combat turns stream to the server's event feed.
-
-## 🔒 Settings
-
-- **Relay client telemetry** *(client, default on)* — report selections/targets/scene.
-- **Remote script execution** *(world, default **off**)* — three states:
-  disabled, *ask me first* (the code is shown in a dialog and waits for your
-  approval; no answer within 25 s counts as a refusal), or *automatic* (runs
-  without prompting). The code is printed in full to the browser console in
-  every mode, so you can always audit what ran with your rights.
-
-## 🤝 Contributing
-
-Adding an addon integration = one handler here + one tool in
-[the server repo](https://github.com/wanoo/foundry-mcp-gateway). The full guide
-(including how to pick the delivery mode and the probe-before-you-write rule) is
-in the server's [CONTRIBUTING.md](https://github.com/wanoo/foundry-mcp-gateway/blob/main/CONTRIBUTING.md).
-Handlers live in `scripts/addons/*.mjs`, merged into the dispatcher by `main.mjs`.
-
-**Versions track the gateway** on major.minor — 1.5.x on both sides. A protocol
-change bumps the minor in both repositories; a fix confined to this module is a
-patch release here alone. `client_status` flags a drift only when major.minor
-differ, and says which half is behind.
-
-**User-facing strings go through `lang/en.json` + `lang/fr.json`.** Not just
-settings: dialog titles and chat flavour reach *players*, and CI fails if a key
-is missing from either file.
-
-Releases are automated: bump `version` in `module.json` **and** `VERSION` in
-`main.mjs`, push to `main`, and the workflow tags, packages and publishes. See
-[docs/foundry-release.md](docs/foundry-release.md) for the registry side.
-
-## 📜 License
-
-MIT.
+[MIT licensed](LICENSE). Independent project, not affiliated with Foundry Gaming LLC.

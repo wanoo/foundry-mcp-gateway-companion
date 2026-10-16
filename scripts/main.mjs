@@ -15,7 +15,10 @@
  * buffer d'événements (outils client_* / get_events).
  */
 
-import { CC_FAMILY_HANDLERS } from "./addons/cc-family.mjs";
+import { CAMPAIGN_CODEX_HANDLERS } from "./addons/campaign-codex.mjs";
+import { ASSET_LIBRARIAN_HANDLERS } from "./addons/asset-librarian.mjs";
+import { MINI_CALENDAR_HANDLERS } from "./addons/mini-calendar.mjs";
+import { MINI_SUITE_HANDLERS } from "./addons/mini-suite.mjs";
 import { SCENE_FX_HANDLERS } from "./addons/scene-fx.mjs";
 import { INSIGHT_HANDLERS } from "./addons/insight.mjs";
 import { ASK_HANDLERS, TABLE_HANDLERS } from "./addons/table.mjs";
@@ -24,7 +27,7 @@ import { verifyCommand, DANGEROUS_COMMANDS } from "./verify.mjs";
 
 const CHANNEL = "module.foundry-mcp-gateway-companion";
 const MODULE_ID = "foundry-mcp-gateway-companion";
-const VERSION = "1.6.0";
+const VERSION = "1.7.0";
 
 /* ---------------------------------------------------------------- utilities */
 
@@ -169,16 +172,18 @@ async function onMessage(msg) {
   // `Object.hasOwn` et pas `TABLE[cmd]` : `cmd` vient du réseau, et
   // `toString`/`constructor` matcheraient via la chaîne de prototypes.
   if (Object.hasOwn(SCENE_HANDLERS, cmd)) {
+    // Le responder accuse réception une seule fois (le MCP sait que ça a été relayé),
+    // AVANT d'exécuter : un handler peut ne jamais rendre la main — un son attend
+    // que le navigateur débloque l'audio, ce qui n'arrive qu'au premier clic.
+    if (id && isResponder() && !alreadyHandled(id)) {
+      reply(id, true, { dispatched: cmd });
+    }
     if (shouldRunHere(targets)) {
       try {
         await SCENE_HANDLERS[cmd](args);
       } catch (e) {
         console.error(`[MCP Companion] ${cmd}:`, e);
       }
-    }
-    // Le responder accuse réception une seule fois (le MCP sait que ça a été relayé).
-    if (id && isResponder() && !alreadyHandled(id)) {
-      reply(id, true, { dispatched: cmd });
     }
     return;
   }
@@ -440,7 +445,10 @@ const UNIQUE_HANDLERS = {
 // Fusionne les handlers des fichiers d'addons dédiés (famille CC + FX de scène).
 Object.assign(
   UNIQUE_HANDLERS,
-  CC_FAMILY_HANDLERS,
+  CAMPAIGN_CODEX_HANDLERS,
+  ASSET_LIBRARIAN_HANDLERS,
+  MINI_CALENDAR_HANDLERS,
+  MINI_SUITE_HANDLERS,
   SCENE_FX_HANDLERS,
   INSIGHT_HANDLERS,
   TABLE_HANDLERS,

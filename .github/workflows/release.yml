@@ -78,7 +78,7 @@ jobs:
           # `assets/` (bannière) reste hors du paquet : c'est un visuel de dépôt,
           # pas un asset livré aux utilisateurs — la politique de contenu Foundry
           # encadre strictement les médias embarqués.
-          zip -r module.zip module.json scripts lang README.md LICENSE \
+          zip -r module.zip module.json scripts lang README.md README.fr.md LICENSE \
             -x "*.DS_Store" "__MACOSX/*"
           unzip -l module.zip
 
@@ -107,4 +107,4 @@ jobs:
           echo "| Version Number | \`$VERSION\` (sans \`v\`) |" >> $GITHUB_STEP_SUMMARY
           echo "| Package Manifest URL | \`https://github.com/wanoo/foundry-mcp-gateway-companion/releases/download/v$VERSION/module.json\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Release Notes URL | \`https://github.com/wanoo/foundry-mcp-gateway-companion/releases/tag/v$VERSION\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Minimum / Verified | 12 / 13 · Maximum : **laisser vide** |" >> $GITHUB_STEP_SUMMARY
+          echo "| Minimum / Verified | 12 / 14 · Maximum : **laisser vide** |" >> $GITHUB_STEP_SUMMARY
