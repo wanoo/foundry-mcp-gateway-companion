@@ -30,7 +30,7 @@ moteurs de dés natifs et interfaces des modules. Par exemple :
 > « Demande aux joueurs quelle piste ils veulent suivre, puis résume leurs réponses pour mes notes de préparation. »
 
 En partie, il peut aussi ouvrir une illustration, déplacer la caméra, lancer
-des dés ou déclencher une ambiance. Le Companion 1.7 traite **46 outils compagnon**,
+des dés ou déclencher une ambiance. Le Companion 1.8 traite **56 outils compagnon**,
 tous inclus dans le catalogue du Gateway. Votre IA se connecte au Gateway ;
 le Companion n'expose pas de point d'accès MCP séparé.
 
@@ -40,6 +40,7 @@ le Companion n'expose pas de point d'accès MCP séparé.
 | Interagir avec les joueurs | Questions et réponses, notifications, documents, cibles et caméra | Aucune pour les actions de base |
 | Lancer les dés dans Foundry | Formules natives ; pools Star Wars FFG natifs | Système correspondant ; Dice So Nice pour les dés 3D |
 | Préparer la campagne | Fiches, tableau des quêtes, dates, ressources étiquetées | Campaign Codex, Mini Calendar, Asset Librarian |
+| Préparer scènes et butin | Coffres, tas de butin et marchands ; préfabriqués posés ou enregistrés sur une scène | Item Piles (avec son intégration système), Mass Edit |
 | Mettre en scène | Météo, effets, filtres de tokens, musique et tuiles actives | FXMaster, Sequencer, Token Magic FX, Mini Player ou Monk's Active Tiles selon l'action |
 
 Consultez le [catalogue complet et ses dépendances](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/capabilities.fr.md).
@@ -61,7 +62,7 @@ navigateur n'est pas un répondant. Les actions destinées aux joueurs nécessit
 aussi que ces joueurs soient connectés avec le module chargé. Le Gateway peut
 travailler sur les documents sans Companion ni navigateur MJ connecté.
 
-Le Companion déclare **Foundry v12 minimum** et **v14 vérifiée**. La paire 1.7 a
+Le Companion déclare **Foundry v12 minimum** et **v14 vérifiée**. La paire 1.8 a
 été testée sur **Foundry 14.369** ; cela ne certifie pas chaque ancien build.
 Le Gateway vise les v13 et v14.
 
@@ -88,13 +89,9 @@ une autre clé déjà présente : examinez l'écart avant de la remplacer. Ouvre
 Foundry en HTTPS ou sur le localhost du navigateur pour vérifier les signatures
 avec Web Crypto.
 
-Gardez Gateway et Companion sur le même **majeur.mineur**, par exemple 1.7.x.
-Les correctifs peuvent différer. Lors de la vérification du 16 octobre 2026,
-les versions publiées du
-[Gateway](https://github.com/wanoo/foundry-mcp-gateway/releases/latest) et du
-[Companion](https://github.com/wanoo/foundry-mcp-gateway-companion/releases/latest)
-étaient en 1.6.0 ; ces sources décrivent la prochaine version 1.7. L'URL du
-manifeste installe le dernier Companion publié.
+Gardez Gateway et Companion sur le même **majeur.mineur**, par exemple 1.8.x.
+Les correctifs peuvent différer. L'URL du manifeste installe le dernier
+Companion publié.
 
 ## Accès et réglages
 
@@ -120,20 +117,26 @@ le mode désactivé supprime la vérification. L'accord d'exécution du script r
 un choix distinct. Les signatures ne chiffrent pas les réponses sur le canal
 socket partagé du module. `client_enrich` exclut les secrets MJ par défaut ; les
 demander explicitement les transmet sur ce canal partagé. Consultez le
-[guide de confiance et de configuration](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/advanced.fr.md#acces-et-confiance-du-companion).
+[guide de confiance et de configuration](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/advanced.fr.md#accès-et-confiance-du-companion).
 
-## De la 1.6 à la 1.7
+## Versions récentes
+
+**La 1.8 prépare scènes et butin** avec Item Piles et Mass Edit, et ferme les
+chemins de code cachés dans les données : tuiles actives, scripts de région,
+scripts de presets et macros de piles suivent désormais les réglages de script
+de ce module, et les changements de ces réglages faits par un client qui ne
+charge pas le module (comme la Gateway) sont annulés.
 
 **La 1.6 a introduit l'authentification des commandes** et l'accord distinct pour
 les macros de script. **La 1.7 enrichit la préparation** avec Campaign Codex 6.9,
 Mini Calendar 10, la recherche Asset Librarian et Mini Player, ainsi que des
 correctifs de ciblage et de son Foundry 14. Conservez vos clés depuis la 1.6,
 rechargez les navigateurs et reconnectez le client MCP. Pour les versions plus
-anciennes, suivez la [migration depuis la 1.5](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/advanced.fr.md#mises-a-jour).
+anciennes, suivez la [migration depuis la 1.5](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/advanced.fr.md#mises-à-jour).
 
 ## Aide et contributions
 
-- [Dépannage](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/advanced.fr.md#depannage) — délais dépassés, signatures et modules absents.
+- [Dépannage](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/advanced.fr.md#dépannage) — délais dépassés, signatures et modules absents.
 - [Discussions](https://github.com/wanoo/foundry-mcp-gateway/discussions) — aide commune et préparation de campagne.
 - [Signaler un bug Companion](https://github.com/wanoo/foundry-mcp-gateway-companion/issues) · [Signaler un bug Gateway](https://github.com/wanoo/foundry-mcp-gateway/issues).
 - [Contribuer](https://github.com/wanoo/foundry-mcp-gateway-companion/blob/main/CONTRIBUTING.md) · [Changelog](https://github.com/wanoo/foundry-mcp-gateway-companion/blob/main/CHANGELOG.md) · [Politique de sécurité](https://github.com/wanoo/foundry-mcp-gateway-companion/blob/main/SECURITY.md), en anglais.

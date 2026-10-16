@@ -33,7 +33,7 @@ echo "== companion handlers vs gateway client_* commands =="
 # changed) instead of passing green on nonsense.
 keys() { # $1 = object name, $2 = file
   awk -v n="$1" '$0 ~ "(export )?const " n " = \\{" {f=1;next} f && /^};/{f=0} f' "$2" \
-    | grep -oE '^  async [a-z0-9_]+\(' | sed -E 's/^  async //; s/\(//' | sort
+    | { grep -oE '^  async [a-z0-9_]+\(' || true; } | sed -E 's/^  async //; s/\(//' | sort
 }
 
 scene=$(keys SCENE_HANDLERS scripts/main.mjs)
@@ -46,7 +46,9 @@ unique=$( { keys UNIQUE_HANDLERS scripts/main.mjs
             keys MINI_SUITE_HANDLERS      scripts/addons/mini-suite.mjs
             keys AMBIENCE_HANDLERS  scripts/addons/ambience.mjs
             keys INSIGHT_HANDLERS   scripts/addons/insight.mjs
-            keys SCENE_FX_HANDLERS  scripts/addons/scene-fx.mjs; } | sort -u )
+            keys SCENE_FX_HANDLERS  scripts/addons/scene-fx.mjs
+            keys ITEM_PILES_HANDLERS scripts/addons/item-piles.mjs
+            keys MASS_EDIT_HANDLERS  scripts/addons/mass-edit.mjs; } | sort -u )
 
 mine=$(printf '%s\n%s\n%s\n' "$scene" "$addressed" "$unique" | grep . | sort -u)
 [ "$(echo "$mine" | grep -c .)" -ge 30 ] \

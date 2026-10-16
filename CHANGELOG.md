@@ -7,6 +7,47 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 on major.minor** — the two halves speak one socket protocol and are released
 together. A patch number may differ between them; a minor should not.
 
+## [1.8.0] — 2026-10-16
+
+*Scene and loot prep with Item Piles and Mass Edit, and a module that guards
+its own script settings. Pairs with foundry-mcp-gateway 1.8.*
+
+### Security
+
+- **The script settings protect themselves.** `runScriptMode`,
+  `runMacroScriptMode` and `verifyMode` changed by a client that does not run
+  this module are reverted and the GM is warned. The MCP gateway is a GM
+  account, so Foundry let it write these settings — and switch remote script
+  execution to « auto » on its own. A GM changing them from Foundry's settings
+  is unaffected.
+- **Active tiles are code.** Monk's Active Tiles runs `runcode`, evaluates its
+  value fields and compiles texts with Handlebars, so `mat_trigger` now checks
+  the tile's actions first: a tile that can run code goes through the same
+  policy and confirmation dialog as `run_script`.
+- The script policy lives in `scripts/policy.mjs`, shared by every handler; its
+  Monk's Active Tiles validator mirrors the gateway's and is covered by
+  `node --test`.
+
+### Added
+
+- **Item Piles** handlers (`ip_create_pile`, `ip_add_items`,
+  `ip_remove_items`, `ip_configure_pile`, `ip_turn_into_pile`,
+  `ip_revert_pile`, `ip_restock`) on top of `game.itempiles.API`, so stacking,
+  system transformers and hooks behave as in the UI. API calls that return
+  `false` become errors; pile macros are refused, and changing a pile that
+  already has one requires the script-macro permission, since Item Piles runs
+  it on every change.
+- **Mass Edit** presets (`me_find_presets`, `me_spawn_preset`,
+  `me_create_preset`): search with the module's query syntax, place on the
+  scene being viewed without prompts, save placeables as a preset. Presets
+  carrying code are placed only under the script policy.
+- `ping_module` reports `itemPiles` and `massEdit` among the dependencies.
+
+### Fixed
+
+- `check-parity.sh` no longer aborts on an empty handler object.
+- French README: links to the gateway's accented anchors.
+
 ## [1.7.0] — 2026-10-16
 
 *Catching up with the wgtnGM suite and with Foundry v14. Pairs with

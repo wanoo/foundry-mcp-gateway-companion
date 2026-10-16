@@ -30,7 +30,7 @@ native roll engines and addon interfaces. For example:
 > “Ask the players which lead they want to follow, then summarize their answers for my preparation notes.”
 
 During play, it can also open a handout, pan a camera, roll dice or cue an ambience.
-The 1.7 Companion handles **46 companion tools**, all included in the Gateway's
+The 1.8 Companion handles **56 companion tools**, all included in the Gateway's
 catalogue. Your AI connects to the Gateway; the Companion exposes no separate
 MCP endpoint.
 
@@ -40,6 +40,7 @@ MCP endpoint.
 | Interact with players | Questions and answers, notifications, documents, targets and camera | None for the basic actions |
 | Roll in Foundry | Native formula rolls; native Star Wars FFG pools | The matching system; Dice So Nice for 3D dice |
 | Prepare campaign content | Campaign sheets, quest board, calendar dates, tagged assets | Campaign Codex, Mini Calendar, Asset Librarian |
+| Prepare scenes and loot | Chests, loot piles and merchants; prefabs placed or saved on a scene | Item Piles (with its system integration), Mass Edit |
 | Stage the scene | Weather, effects, token filters, music and active tiles | FXMaster, Sequencer, Token Magic FX, Mini Player or Monk's Active Tiles, depending on the action |
 
 See the [complete catalogue and dependencies](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/capabilities.md).
@@ -62,7 +63,7 @@ with the module loaded. The Gateway can still work on documents without the
 Companion or a connected GM browser.
 
 The Companion declares **Foundry v12 minimum** and **v14 verified**. The paired
-1.7 application was tested on **Foundry 14.369**; this does not certify every
+1.8 application was tested on **Foundry 14.369**; this does not certify every
 older build. The Gateway targets v13 and v14.
 
 ## Install and establish trust
@@ -87,12 +88,8 @@ then reload GM browsers. The trust tool refuses to overwrite a different existin
 key; inspect the mismatch before replacing it. Use Foundry over HTTPS or browser
 localhost so Web Crypto can verify signatures.
 
-Keep Gateway and Companion on the same **major.minor**, such as 1.7.x. Patch
-numbers may differ. At the publication check on 16 October 2026, both
-[Gateway](https://github.com/wanoo/foundry-mcp-gateway/releases/latest) and
-[Companion](https://github.com/wanoo/foundry-mcp-gateway-companion/releases/latest)
-were published as 1.6.0; this source tree documents the upcoming 1.7.
-The manifest URL installs the latest published Companion.
+Keep Gateway and Companion on the same **major.minor**, such as 1.8.x. Patch
+numbers may differ. The manifest URL installs the latest published Companion.
 
 ## Access and settings
 
@@ -118,7 +115,12 @@ channel. GM secrets in `client_enrich` are excluded by default; explicitly
 requesting them sends them over that shared channel.
 See the [trust and configuration guide](https://github.com/wanoo/foundry-mcp-gateway/blob/main/docs/advanced.md#access-and-companion-trust).
 
-## 1.6 to 1.7
+## Recent versions
+
+**1.8 prepares scenes and loot** with Item Piles and Mass Edit, and closes code
+paths hidden in data: active tiles, region scripts, preset scripts and pile
+macros now obey this module's script settings, and changes to those settings
+made by a client that does not run the module (such as the Gateway) are reverted.
 
 **1.6 introduced command authentication** and separate script-macro approval.
 **1.7 improves campaign preparation** with Campaign Codex 6.9, Mini Calendar 10,

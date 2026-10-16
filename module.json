@@ -1,8 +1,8 @@
 {
   "id": "foundry-mcp-gateway-companion",
   "title": "Foundry MCP Companion",
-  "description": "Browser-side companion for the foundry-mcp-gateway MCP server. The gateway talks to Foundry over the socket protocol, which only reaches documents; this module runs in the Gamemaster's browser and executes what the socket cannot: read prepared sheet values, screenshot the canvas, ask a player a question and get their answer, run macros, roll with the real system engine and Dice So Nice, drive weather and effects. Install it and your MCP client gains 46 client_* tools. Optional — without it, everything else still works.",
-  "version": "1.7.0",
+  "description": "Browser-side companion for the foundry-mcp-gateway MCP server. The gateway talks to Foundry over the socket protocol, which only reaches documents; this module runs in the Gamemaster's browser and executes what the socket cannot: read prepared sheet values, screenshot the canvas, ask a player a question and get their answer, run macros, roll with the real system engine and Dice So Nice, drive weather and effects. Install it and your MCP client gains 56 client_* tools. Optional — without it, everything else still works.",
+  "version": "1.8.0",
   "authors": [
     {
       "name": "wanoo",

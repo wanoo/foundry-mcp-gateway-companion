@@ -6,6 +6,8 @@
  * Fusionné dans UNIQUE_HANDLERS par scripts/main.mjs.
  */
 
+import { assertMatTileAllowed } from "../policy.mjs";
+
 export const SCENE_FX_HANDLERS = {
   // ---------------------------------------------- Monk's Active Tile Triggers
   async mat_trigger({ tileId, tokens }) {
@@ -14,6 +16,7 @@ export const SCENE_FX_HANDLERS = {
     if (typeof tile.document.trigger !== "function") {
       throw new Error("monks-active-tiles module not active");
     }
+    await assertMatTileAllowed(tile.document);
     const acting = (tokens ?? []).map((id) => canvas.tokens.get(id)).filter(Boolean);
     await tile.document.trigger({ tokens: acting, method: "manual" });
     return { triggered: tileId, tokens: acting.map((t) => t.id) };
