@@ -31,5 +31,7 @@
   "MCPCOMPANION.ErrClockSkew": "Commande expirée. Si cela se reproduit, vérifiez l'horloge de la machine qui fait tourner ce navigateur.",
   "MCPCOMPANION.ErrWrongWorld": "Cette commande a été signée pour un autre monde.",
   "MCPCOMPANION.WarnKeyChanged": "La clé publique de la passerelle a changé pendant cette session. L'ancienne reste en vigueur jusqu'au rechargement. Si vous n'êtes pas à l'origine de ce changement, quelqu'un d'autre peut modifier les réglages de votre monde.",
-  "MCPCOMPANION.WarnSettingsPermission": "Dans ce monde, un rôle inférieur à Assistant peut modifier les réglages du monde — y compris la clé de passerelle de confiance de ce module. Revoyez Configurer les permissions → Modifier les réglages du monde."
+  "MCPCOMPANION.WarnSettingsPermission": "Dans ce monde, un rôle inférieur à Assistant peut modifier les réglages du monde — y compris la clé de passerelle de confiance de ce module. Revoyez Configurer les permissions → Modifier les réglages du monde.",
+  "MCPCOMPANION.WarnPolicyReverted": "Le réglage « {key} » de Foundry MCP Companion a été modifié par {user}, un client qui ne charge pas ce module (par exemple la passerelle MCP). Le changement a été annulé : seul un MJ peut le modifier, depuis les réglages de Foundry.",
+  "MCPCOMPANION.MatConfirmBody": "L'IA veut déclencher la tuile active « {name} », dont les actions peuvent exécuter du code dans ce navigateur :"
 }

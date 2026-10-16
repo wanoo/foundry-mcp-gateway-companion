@@ -31,5 +31,7 @@
   "MCPCOMPANION.ErrClockSkew": "Command expired. If this keeps happening, check the clock on the machine running this browser.",
   "MCPCOMPANION.ErrWrongWorld": "This command was signed for a different world.",
   "MCPCOMPANION.WarnKeyChanged": "The gateway public key changed during this session. The previous key stays in force until you reload. If you did not do this, someone else can modify your world settings.",
-  "MCPCOMPANION.WarnSettingsPermission": "In this world, a role below Assistant can modify world settings — including this module's trusted gateway key. Review Configure Permissions → Modify World Settings."
+  "MCPCOMPANION.WarnSettingsPermission": "In this world, a role below Assistant can modify world settings — including this module's trusted gateway key. Review Configure Permissions → Modify World Settings.",
+  "MCPCOMPANION.WarnPolicyReverted": "The setting « {key} » of Foundry MCP Companion was changed by {user}, a client that does not run this module (for example the MCP gateway). The change was reverted: only a Gamemaster can change it, from Foundry's settings.",
+  "MCPCOMPANION.MatConfirmBody": "The AI wants to trigger the active tile « {name} », whose actions can run code in this browser:"
 }

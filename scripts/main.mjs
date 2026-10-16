@@ -24,6 +24,7 @@ import { INSIGHT_HANDLERS } from "./addons/insight.mjs";
 import { ASK_HANDLERS, TABLE_HANDLERS } from "./addons/table.mjs";
 import { AMBIENCE_HANDLERS } from "./addons/ambience.mjs";
 import { verifyCommand, DANGEROUS_COMMANDS } from "./verify.mjs";
+import { assertScriptAllowed, guardPolicySettings } from "./policy.mjs";
 
 const CHANNEL = "module.foundry-mcp-gateway-companion";
 const MODULE_ID = "foundry-mcp-gateway-companion";
@@ -261,66 +262,6 @@ const SCENE_HANDLERS = {
     if (doc?.sheet) doc.sheet.render(true);
   },
 };
-
-/* --------------------------------------------- politique d'exécution de code */
-
-/** Garde commun à `run_script` et aux macros de type « script ».
- *
- * Les deux exécutent du JavaScript avec les droits du MJ, donc ils partagent
- * une politique et un dialogue. Le réglage diffère : `run_script` est à
- * « off » par défaut (personne ne s'attend à ce qu'un client MCP évalue du
- * code arbitraire), les macros à « confirm » (elles marchaient déjà, les
- * refuser d'office casserait des mondes en place sans prévenir).
- *
- * @param {object} o
- * @param {string} o.setting  clé du réglage tri-état à consulter
- * @param {string} o.source   le code affiché au MJ pour audit
- * @param {string} o.title    titre du dialogue de confirmation
- * @param {string} o.body     texte d'explication du dialogue
- * @param {string} o.disabled message d'erreur quand le mode vaut « off »
- * @param {string} o.declined message d'erreur quand le MJ refuse ou ne répond pas
- */
-async function assertScriptAllowed({ setting, source, title, body, disabled, declined }) {
-  const mode = game.settings.get(MODULE_ID, setting);
-  if (mode === "off") throw new Error(disabled);
-
-  // Le code est TOUJOURS tracé avant de tourner : même en mode automatique,
-  // le MJ doit pouvoir auditer après coup ce qui s'est exécuté chez lui.
-  console.warn(
-    "%c[MCP Companion] remote code — executing with GM rights:",
-    "color:#f66;font-weight:bold"
-  );
-  console.warn(source);
-
-  if (mode !== "confirm") return;
-
-  const D2 = foundry.applications?.api?.DialogV2;
-  if (!D2?.confirm) throw new Error("DialogV2 unavailable (Foundry v12+ required)");
-  // Pas de repli identité : si l'échappeur manque, le code à valider
-  // s'exécuterait AU RENDU du dialogue, avant que le MJ ne clique — le
-  // mode « confirm » deviendrait strictement équivalent au mode « auto ».
-  const escape = foundry.utils?.escapeHTML;
-  if (typeof escape !== "function") {
-    throw new Error("foundry.utils.escapeHTML unavailable — refusing to display untrusted code");
-  }
-  // On refuse passé le délai : un MJ absent ne vaut pas un accord, et
-  // l'appel MCP côté serveur expire de toute façon vers 30 s.
-  let timer;
-  const expiry = new Promise((resolve) => {
-    timer = setTimeout(() => resolve(false), 25000);
-  });
-  const asked = D2.confirm({
-    window: { title },
-    content:
-      `<p>${escape(body)}</p>` +
-      `<pre style="max-height:22rem;overflow:auto;white-space:pre-wrap">${escape(source)}</pre>`,
-    rejectClose: false,
-    modal: true,
-  });
-  const ok = await Promise.race([asked, expiry]);
-  clearTimeout(timer);
-  if (!ok) throw new Error(declined);
-}
 
 /* ------------------------------------------------------------ unique handlers */
 
@@ -578,6 +519,9 @@ Hooks.once("ready", () => {
 
   game.socket.on(CHANNEL, onMessage);
   companions.add(game.user.id); // je fais partie des clients qui ont chargé le module
+  // Les réglages d'exécution ne se changent que depuis un navigateur qui
+  // charge ce module : la passerelle (MJ headless) ne peut pas s'autoriser.
+  guardPolicySettings({ isCompanion: (id) => companions.has(id), isResponder });
   setupTelemetry();
   // Signale sa présence (registre des autres companions + buffer du serveur MCP).
   emit({ evt: "companion_ready", user: game.user.id, data: { version: VERSION, responder: isResponder() } });
