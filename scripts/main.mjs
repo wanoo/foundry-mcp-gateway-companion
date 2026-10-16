@@ -30,7 +30,7 @@ import { assertScriptAllowed, guardPolicySettings } from "./policy.mjs";
 
 const CHANNEL = "module.foundry-mcp-gateway-companion";
 const MODULE_ID = "foundry-mcp-gateway-companion";
-const VERSION = "1.7.0";
+const VERSION = "1.8.0";
 
 /* ---------------------------------------------------------------- utilities */
 
