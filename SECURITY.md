@@ -32,6 +32,11 @@ gateway over a Foundry socket channel. Concretely:
   `module.foundry-mcp-gateway-companion`, which Foundry relays between clients
   of the same world. A player who can emit on that channel can therefore ask
   the responder GM to act. Treat world membership as a trust boundary.
+- **The script settings protect themselves.** Changes to `runScriptMode`,
+  `runMacroScriptMode` or `verifyMode` made by a client that does not run this
+  module — such as the headless gateway, which is a GM account — are reverted
+  and the GM is warned. Triggering a Monk's Active Tile or spawning a Mass Edit
+  preset that contains code goes through the same policy as `run_script`.
 - **Telemetry** (token selection, targets, viewed scene) is relayed to the
   gateway when enabled; it's a per-client setting the user can turn off.
 

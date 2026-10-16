@@ -33,5 +33,7 @@
   "MCPCOMPANION.WarnKeyChanged": "La clé publique de la passerelle a changé pendant cette session. L'ancienne reste en vigueur jusqu'au rechargement. Si vous n'êtes pas à l'origine de ce changement, quelqu'un d'autre peut modifier les réglages de votre monde.",
   "MCPCOMPANION.WarnSettingsPermission": "Dans ce monde, un rôle inférieur à Assistant peut modifier les réglages du monde — y compris la clé de passerelle de confiance de ce module. Revoyez Configurer les permissions → Modifier les réglages du monde.",
   "MCPCOMPANION.WarnPolicyReverted": "Le réglage « {key} » de Foundry MCP Companion a été modifié par {user}, un client qui ne charge pas ce module (par exemple la passerelle MCP). Le changement a été annulé : seul un MJ peut le modifier, depuis les réglages de Foundry.",
-  "MCPCOMPANION.MatConfirmBody": "L'IA veut déclencher la tuile active « {name} », dont les actions peuvent exécuter du code dans ce navigateur :"
+  "MCPCOMPANION.MatConfirmBody": "L'IA veut déclencher la tuile active « {name} », dont les actions peuvent exécuter du code dans ce navigateur :",
+  "MCPCOMPANION.PresetScriptConfirmBody": "L'IA veut poser le preset Mass Edit « {name} », dont les scripts de pose exécutent ce code dans votre navigateur avec les droits de MJ :",
+  "MCPCOMPANION.PresetCodeConfirmBody": "L'IA veut poser le preset Mass Edit « {name} », dont les éléments peuvent exécuter du code (tuiles actives, scripts de région, macros de pile) :"
 }
