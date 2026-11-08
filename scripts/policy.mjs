@@ -94,7 +94,7 @@ export function guardPolicySettings({ isCompanion, isResponder }) {
       return;
     }
     const who = game.users.get(userId)?.name ?? userId;
-    console.error(`[MCP Companion] ${key} changed to « ${value} » by ${who}, who does not run this module — reverted.`);
+    console.error(`[MCP Companion] ${key} changed to « ${value} » by ${who}, who is not a GM running this module — reverted.`);
     if (game.user.isGM) {
       ui.notifications.error(game.i18n.format("MCPCOMPANION.WarnPolicyReverted", { key, user: who }));
     }
