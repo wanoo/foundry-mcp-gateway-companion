@@ -137,7 +137,13 @@ export async function verifyCommand({ msg, publicKeyHex, worldId, now }) {
   return { ok: true, args };
 }
 
-/** Commandes qui exécutent du code avec les droits du MJ. Sans signature
- *  valide, elles sont refusées — le reste continue de fonctionner, pour ne pas
- *  transformer une mise à jour en panne totale. */
-export const DANGEROUS_COMMANDS = new Set(["run_script", "run_macro"]);
+/** Commandes qui PEUVENT exécuter du code avec les droits du MJ (directement,
+ *  ou via une tuile MAT, un preset Mass Edit, une macro de pile Item Piles).
+ *  Sans signature valide, elles sont refusées — le reste continue de
+ *  fonctionner, pour ne pas transformer une mise à jour en panne totale.
+ *  test/verify.test.mjs échoue si un handler qui atteint la politique de
+ *  script manque ici. */
+export const DANGEROUS_COMMANDS = new Set([
+  "run_script", "run_macro", "mat_trigger", "me_spawn_preset",
+  "ip_create_pile", "ip_add_items", "ip_remove_items", "ip_configure_pile", "ip_restock",
+]);

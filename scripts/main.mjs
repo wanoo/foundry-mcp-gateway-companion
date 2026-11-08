@@ -30,7 +30,7 @@ import { assertScriptAllowed, guardPolicySettings } from "./policy.mjs";
 
 const CHANNEL = "module.foundry-mcp-gateway-companion";
 const MODULE_ID = "foundry-mcp-gateway-companion";
-const VERSION = "1.8.0";
+const VERSION = "1.8.1";
 
 /* ---------------------------------------------------------------- utilities */
 
@@ -178,9 +178,10 @@ async function onMessage(msg) {
     // Le responder accuse réception une seule fois (le MCP sait que ça a été relayé),
     // AVANT d'exécuter : un handler peut ne jamais rendre la main — un son attend
     // que le navigateur débloque l'audio, ce qui n'arrive qu'au premier clic.
-    if (id && isResponder() && !alreadyHandled(id)) {
-      reply(id, true, { dispatched: cmd });
-    }
+    // Anti-rejeu sur CHAQUE client, avant le ciblage : un joueur qui renvoie
+    // une commande signée captée (même `id`, `targets` réécrit) est ignoré.
+    if (id && alreadyHandled(id)) return;
+    if (id && isResponder()) reply(id, true, { dispatched: cmd });
     if (shouldRunHere(targets)) {
       try {
         await SCENE_HANDLERS[cmd](args);
@@ -195,7 +196,9 @@ async function onMessage(msg) {
   // (poser une question à un joueur n'a de sens que chez lui). Le responder ne
   // s'en mêle pas, sinon il répondrait à la place de l'intéressé.
   if (Object.hasOwn(ASK_HANDLERS, cmd)) {
-    if (!shouldRunHere(targets) || !id || alreadyHandled(id)) return;
+    // alreadyHandled AVANT shouldRunHere : sinon un rejeu avec `targets`
+    // réécrit atteindrait un autre joueur que celui visé.
+    if (!id || alreadyHandled(id) || !shouldRunHere(targets)) return;
     try {
       reply(id, true, await ASK_HANDLERS[cmd](args));
     } catch (e) {
@@ -527,7 +530,9 @@ Hooks.once("ready", () => {
   companions.add(game.user.id); // je fais partie des clients qui ont chargé le module
   // Les réglages d'exécution ne se changent que depuis un navigateur qui
   // charge ce module : la passerelle (MJ headless) ne peut pas s'autoriser.
-  guardPolicySettings({ isCompanion: (id) => companions.has(id), isResponder });
+  // …et seulement depuis le navigateur d'un MJ : un joueur à qui l'on aurait
+  // accordé SETTINGS_MODIFY charge lui aussi le module.
+  guardPolicySettings({ isCompanion: (id) => companions.has(id) && !!game.users.get(id)?.isGM, isResponder });
   setupTelemetry();
   // Signale sa présence (registre des autres companions + buffer du serveur MCP).
   emit({ evt: "companion_ready", user: game.user.id, data: { version: VERSION, responder: isResponder() } });

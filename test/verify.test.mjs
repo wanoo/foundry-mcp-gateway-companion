@@ -128,3 +128,19 @@ test("les commandes dangereuses sont bien celles qui exécutent du code", () => 
   assert.ok(!DANGEROUS_COMMANDS.has("pan"));
   assert.ok(!DANGEROUS_COMMANDS.has("ask"));
 });
+
+test("tout handler qui peut exécuter du code exige une signature", async () => {
+  // Découpe chaque fichier en handlers (`  async nom(`) et repère ceux qui
+  // atteignent la politique de script. En oublier un dans DANGEROUS_COMMANDS
+  // le laisserait déclencher par n'importe quel joueur en mode « guarded ».
+  const files = ["main.mjs", "addons/scene-fx.mjs", "addons/mass-edit.mjs", "addons/item-piles.mjs"];
+  const reaches = /assert\w*Allowed\(|loadItems\(/;
+  const found = [];
+  for (const f of files) {
+    const src = await readFile(new URL(`../scripts/${f}`, import.meta.url), "utf8");
+    const parts = src.split(/^ {2}async (\w+)\(/m);
+    for (let i = 1; i < parts.length; i += 2) if (reaches.test(parts[i + 1])) found.push(parts[i]);
+  }
+  assert.ok(found.includes("mat_trigger") && found.includes("run_script"), `détection cassée : ${found}`);
+  for (const cmd of found) assert.ok(DANGEROUS_COMMANDS.has(cmd), `${cmd} peut exécuter du code mais n'exige pas de signature`);
+});

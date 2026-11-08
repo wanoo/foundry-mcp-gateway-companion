@@ -7,6 +7,31 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 on major.minor** — the two halves speak one socket protocol and are released
 together. A patch number may differ between them; a minor should not.
 
+## [1.8.1] — 2026-11-08
+
+*Security fixes from an audit of 1.8.0. No protocol change: works with gateway
+1.8.0 and 1.8.1.*
+
+### Security
+
+- **Every command that can run code needs a signature.** In « Guarded » mode
+  without a trusted key, only `run_script` and `run_macro` were refused when
+  unsigned: a player could send `mat_trigger`, `me_spawn_preset` or an Item
+  Piles change from their console and make the GM's browser run a tile's,
+  preset's or pile's code (or show the GM a confirmation that looked like it
+  came from the AI). These are now refused unsigned too. **If you never ran
+  `companion_trust_key`, run it once** — or those tools will answer with
+  « no trusted key ». A test fails if a future code-running handler is left
+  out.
+- **No more replays.** A signed scene command (sound, notification, pan…) could
+  be captured and re-sent by a player for its whole validity window, with its
+  `targets` rewritten; same for a question to a player. Every client now drops
+  an `id` it has already seen.
+- **Script settings change only from a GM's browser.** The revert of
+  `runScriptMode`/`runMacroScriptMode`/`verifyMode` accepted any client running
+  the module, including a player who had been granted the right to change
+  settings.
+
 ## [1.8.0] — 2026-10-16
 
 *Scene and loot prep with Item Piles and Mass Edit, and a module that guards
