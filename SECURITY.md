@@ -35,8 +35,13 @@ gateway over a Foundry socket channel. Concretely:
 - **The script settings protect themselves.** Changes to `runScriptMode`,
   `runMacroScriptMode` or `verifyMode` made by a client that does not run this
   module — such as the headless gateway, which is a GM account — are reverted
-  and the GM is warned. Triggering a Monk's Active Tile or spawning a Mass Edit
-  preset that contains code goes through the same policy as `run_script`.
+  and the GM is warned — as are changes made from a player's browser. Triggering
+  a Monk's Active Tile, spawning a Mass Edit preset or changing an Item Piles
+  pile that contains code goes through the same policy as `run_script`, and
+  needs a signed command.
+- **Replies are public and can be forged.** Foundry gives no sender on a module
+  channel, so any player can read the GM's replies and answer a command first.
+  Signatures cover what this module executes, not what the gateway reads back.
 - **Telemetry** (token selection, targets, viewed scene) is relayed to the
   gateway when enabled; it's a per-client setting the user can turn off.
 
